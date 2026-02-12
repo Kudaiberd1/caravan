@@ -1,4 +1,4 @@
-import LoginCard from "../layouts/LoginCard.tsx";
+import LoginCard from "../../layouts/LoginCard.tsx";
 import {useNavigate} from "react-router-dom";
 
 const ForgotPassword = () => {
@@ -45,7 +45,7 @@ const ForgotPassword = () => {
                 <button
                     type={"submit"}
                     className={"w-full rounded-2xl bg-[#5567B1] py-4 font-semibold text-white shadow-[0_14px_30px_rgba(85,103,177,0.35)] hover:bg-[#5E72C7] transition"}
-                    onClick={() => navigate("/reset-password") }
+                    onClick={() => navigate("/verification-code") }
                 >
                     Reset password
                 </button>

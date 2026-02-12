@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
-import LoginCard from "../layouts/LoginCard.tsx";
+import LoginCard from "../../layouts/LoginCard.tsx";
 
 const Login = () => {
     const [hasError, setHasError] = useState(false);
@@ -91,7 +91,7 @@ const Login = () => {
                                 Remember me
                             </label>
 
-                            <button type={"button"} className={"text-sm font-medium text-[#6C86FF] hover:text-[#8FA2FF]"} onClick={() => navigate("/verification-code")}>
+                            <button type={"button"} className={"text-sm font-medium text-[#6C86FF] hover:text-[#8FA2FF]"} onClick={() => navigate("/forgot-password")}>
                                 Forgot password?
                             </button>
                         </div>
@@ -99,6 +99,7 @@ const Login = () => {
                         <button
                             type={"submit"}
                             className={"w-full rounded-2xl bg-[#5567B1] py-4 font-semibold text-white shadow-[0_14px_30px_rgba(85,103,177,0.35)] hover:bg-[#5E72C7] transition"}
+                            onClick={() => navigate("/")}
                         >
                             Sign in to Dashboard
                         </button>
