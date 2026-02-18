@@ -5,9 +5,9 @@ import folderIcon from "../assets/icons/FolderNotchOpen.svg";
 import homeIcon from "../assets/icons/HouseLine.svg";
 
 const navItems = [
-    {to: "/", label: "Dashboard", icon: "home"},
-    {to: "/performance", label: "Performance", icon: "calendar"},
-    {to: "/reports", label: "Reports", icon: "folder"},
+    {to: "/", label: "Главная Панель", icon: "home"},
+    {to: "/performance", label: "Сотрудники", icon: "calendar"},
+    {to: "/reports", label: "Отчеты", icon: "folder"},
 ] as const;
 
 const Icon = ({name}: {name: "home" | "calendar" | "folder"}) => {

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import LoginCard from "../../layouts/LoginCard.tsx";
 
 const Login = () => {
-    const [hasError, setHasError] = useState(false);
+    const [hasError, setHasError] = useState(0);
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -18,11 +18,19 @@ const Login = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!username.trim() || !password.trim()) {
-            setHasError(true);
+        if (!username.trim() && !password.trim()) {
+            setHasError(3);
+            return;
+        }else if(!username.trim()) {
+            setHasError(1);
+            return;
+        }else if(!password.trim()) {
+            setHasError(2);
             return;
         }
-        setHasError(false);
+        setHasError(0);
+
+        navigate("/")
         // ...
     }
 
@@ -36,7 +44,7 @@ const Login = () => {
                             <div
                                 className={
                                     "flex items-center gap-3 rounded-xl border bg-black/15 px-4 py-3.5 transition " +
-                                    (hasError ? "border-red-500 shadow-[0_0_0_1px_rgba(239,68,68,0.5)]" : "border-white/10")
+                                    ((hasError==1 || hasError==3) ? "border-red-500 shadow-[0_0_0_1px_rgba(239,68,68,0.5)]" : "border-white/10")
                                 }
                             >
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className={"text-white/45"}>
@@ -47,7 +55,7 @@ const Login = () => {
                                     value={username}
                                     onChange={(e) => {
                                         setUsername(e.target.value);
-                                        if (hasError) setHasError(false);
+                                        if (hasError) setHasError(0);
                                     }}
                                     className={"w-full bg-transparent outline-none text-white/80 placeholder:text-white/25"}
                                     placeholder={"name@caravan-resources.com"}
@@ -60,7 +68,7 @@ const Login = () => {
                             <div
                                 className={
                                     "flex items-center gap-3 rounded-xl border bg-black/15 px-4 py-3.5 transition " +
-                                    (hasError ? "border-red-500 shadow-[0_0_0_1px_rgba(239,68,68,0.5)]" : "border-white/10")
+                                    ((hasError==2 || hasError==3) ? "border-red-500 shadow-[0_0_0_1px_rgba(239,68,68,0.5)]" : "border-white/10")
                                 }
                             >
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className={"text-white/45"}>
@@ -73,7 +81,7 @@ const Login = () => {
                                     value={password}
                                     onChange={(e) => {
                                         setPassword(e.target.value);
-                                        if (hasError) setHasError(false);
+                                        if (hasError) setHasError(0);
                                     }}
                                     className={"w-full bg-transparent outline-none text-white/80 placeholder:text-white/25"}
                                     placeholder={"••••••••"}
@@ -99,7 +107,7 @@ const Login = () => {
                         <button
                             type={"submit"}
                             className={"w-full rounded-2xl bg-[#5567B1] py-4 font-semibold text-white shadow-[0_14px_30px_rgba(85,103,177,0.35)] hover:bg-[#5E72C7] transition"}
-                            onClick={() => navigate("/")}
+                            // onClick={() => navigate("/")}
                         >
                             Sign in to Dashboard
                         </button>

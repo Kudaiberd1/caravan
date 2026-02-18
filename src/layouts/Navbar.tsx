@@ -18,10 +18,10 @@ const Navbar = () => {
                         "bg-white outline-none focus:border-[#5F6FA3]"
                     }
                 >
-                    <option>Almaty</option>
-                    <option>Astana</option>
-                    <option>Ashyqtas</option>
-                    <option>Maiqudyq</option>
+                    <option>Алматы</option>
+                    <option>Алмалы</option>
+                    <option>Ашыктас</option>
+                    <option>Майкудык</option>
                 </select>
 
                 <button className={"text-[#5A667A] hover:text-[#1F2A44] cursor-pointer"}>
