@@ -1,4 +1,4 @@
-import LoginCard from "../../layouts/LoginCard.tsx";
+import LoginCard from "../../components/LoginCard.tsx";
 import {useNavigate} from "react-router-dom";
 
 const ForgotPassword = () => {
