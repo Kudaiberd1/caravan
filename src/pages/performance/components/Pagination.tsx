@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 
 type PaginationProps = {
-  page: number; // 1-based
+  page: number;
   size: number;
   totalPages: number;
   totalElements: number;

@@ -1,42 +1,43 @@
+import * as React from "react";
 import { DayPicker } from "react-day-picker";
 import type { DateRange } from "react-day-picker";
 import "react-day-picker/style.css";
-import { format } from "date-fns";
-import calendar from "../assets/icons/CalendarBlank.svg";
-import {useEffect, useState} from "react";
+import { addDays, format } from "date-fns";
 
 function fmt(d?: Date) {
     return d ? format(d, "dd.MM.yyyy") : "";
 }
 
-type DateRangePillProps = {
-    value?: DateRange;
-    onChange?: (range?: DateRange) => void;
-};
+function toWeekRange(from: Date): DateRange {
+    return { from, to: addDays(from, 7) };
+}
 
-export default function DateRangePill({ value, onChange }: DateRangePillProps) {
-    const [open, setOpen] = useState(false);
-    const [range, setRange] = useState<DateRange | undefined>(value);
-
-    useEffect(() => {
-        setRange(value);
-    }, [value]);
+export default function DateRangePillForWeek() {
+    const [open, setOpen] = React.useState(false);
+    const [range, setRange] = React.useState<DateRange | undefined>(
+        toWeekRange(new Date(2026, 1, 1))
+    );
 
     const label =
         range?.from && range?.to
             ? `${fmt(range.from)} - ${fmt(range.to)}`
-            : "Диапазон дат";
+            : "Выберите даты";
 
     return (
         <div className="relative inline-block">
             <button
                 type="button"
                 onClick={() => setOpen((v) => !v)}
-                className="inline-flex items-center px-4 py-2 rounded-lg border border-gray-200 bg-white text-[15px] text-gray-900 font-[450]"
+                className="
+          inline-flex items-center
+          px-3 py-1
+          rounded-full
+          border border-gray-200
+          bg-white
+          text-sm text-gray-900
+          shadow-sm
+        "
             >
-                {!(range?.from && range?.to) && (
-                    <img src={calendar} alt="calendar" className="h-5 w-5 mr-2" />
-                )}
                 {label}
             </button>
 
@@ -47,20 +48,15 @@ export default function DateRangePill({ value, onChange }: DateRangePillProps) {
                 >
                     <DayPicker
                         mode="range"
-                        required={false}
                         selected={range}
-                        onSelect={(selectedRange) => {
-                            console.log(selectedRange)
-                            setRange(selectedRange);
-                            onChange?.(selectedRange);
-
+                        onDayClick={(day) => {
+                            setRange(toWeekRange(day));
                         }}
                         numberOfMonths={2}
                     />
 
                     <div className="flex justify-end gap-2 pt-2">
                         <button
-                            type="button"
                             className="px-3 py-1 rounded-lg border border-gray-200 text-sm"
                             onClick={() => setOpen(false)}
                         >

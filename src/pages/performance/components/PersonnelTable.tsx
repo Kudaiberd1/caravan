@@ -16,6 +16,8 @@ type PersonnelTableProps = {
   activeTab: number;
   selectedRows: string[];
   selectedManagerIds: string[];
+  setSelectedRows: React.Dispatch<React.SetStateAction<string[]>>;
+  setSelectedManagerIds: React.Dispatch<React.SetStateAction<string[]>>;
   onToggleRow: (id: string) => void;
   onToggleManager: (id: string) => void;
 };
@@ -25,9 +27,43 @@ export default function PersonnelTable({
   activeTab,
   selectedRows,
   selectedManagerIds,
+  setSelectedRows,
+  setSelectedManagerIds,
   onToggleRow,
   onToggleManager,
 }: PersonnelTableProps) {
+  const pageIds = rows.map((r) => r.id);
+  const currentSelected = activeTab === 1 ? selectedRows : selectedManagerIds;
+
+  const anyOnPageSelected = pageIds.some((id) => currentSelected.includes(id));
+  const allOnPageSelected = pageIds.length > 0 && pageIds.every((id) => currentSelected.includes(id));
+
+  const toggleSelectAllOnPage = () => {
+    if (pageIds.length === 0) return;
+
+    if (allOnPageSelected) {
+      if (activeTab === 1) {
+        setSelectedRows((prev) => prev.filter((id) => !pageIds.includes(id)));
+      } else {
+        setSelectedManagerIds((prev) => prev.filter((id) => !pageIds.includes(id)));
+      }
+      return;
+    }
+
+    if (activeTab === 1) {
+      setSelectedRows((prev) => {
+        const set = new Set(prev);
+        for (const id of pageIds) set.add(id);
+        return Array.from(set);
+      });
+    } else {
+      setSelectedManagerIds((prev) => {
+        const set = new Set(prev);
+        for (const id of pageIds) set.add(id);
+        return Array.from(set);
+      });
+    }
+  };
   return (
     <div className={"w-full"}>
       <div className={"w-full overflow-x-auto"}>
@@ -35,7 +71,18 @@ export default function PersonnelTable({
           <thead>
             <tr className={"text-[11px] uppercase tracking-wide text-gray-400 border-b border-gray-200"}>
               <th className={"py-3 px-4 w-[44px]"}>
-                <span className={"inline-block h-4 w-4 rounded-full border border-gray-300"} />
+                <button
+                  type="button"
+                  onClick={toggleSelectAllOnPage}
+                  className={
+                    "h-4 w-4 rounded border flex items-center justify-center " +
+                    (allOnPageSelected ? "border-blue-600" : anyOnPageSelected ? "border-blue-600" : "border-gray-300")
+                  }
+                  aria-label="select all on page"
+                >
+                  {allOnPageSelected && <span className="h-2 w-2 bg-blue-600" />}
+                  {!allOnPageSelected && anyOnPageSelected && <span className="h-0.5 w-2 bg-blue-600" />}
+                </button>
               </th>
               <th className={"py-3 pr-3 text-left"}>
                 <div className={"inline-flex items-center gap-1"}>

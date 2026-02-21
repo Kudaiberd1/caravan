@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 export type PaginatedResponse<T> = {
     content: T[];
-    page: number;          // 1-based
+    page: number;
     size: number;
     totalElements: number;
     totalPages: number;
@@ -46,7 +46,7 @@ export function getMockPersonnelPage<T>(
 
 type UsePersonnelFiltersArgs = {
     data: PersonnelRow[];
-    activeTab: number;        // 1=Сотрудника, 2=Руководителя
+    activeTab: number;
     search: string;
     pageSize?: number;
 };
@@ -57,7 +57,6 @@ export function usePersonnelFilters({
                                         search,
                                         pageSize = 10,
                                     }: UsePersonnelFiltersArgs) {
-    // 1) build filtered base dataset
     const basePersonnel = useMemo(() => {
         const position = activeTab === 1 ? "sotrudnik" : "rukovoditel";
         const q = search.trim().toLowerCase();
@@ -72,17 +71,14 @@ export function usePersonnelFilters({
         });
     }, [data, activeTab, search]);
 
-    // 2) keep pagination response in state (backend-like)
     const [response, setResponse] = useState<PaginatedResponse<PersonnelRow>>(() =>
         getMockPersonnelPage(basePersonnel, 1, pageSize)
     );
 
-    // 3) when base dataset changes (tab/search), reset to page 1
     useEffect(() => {
         setResponse(getMockPersonnelPage(basePersonnel, 1, pageSize));
     }, [basePersonnel, pageSize]);
 
-    // 4) function to change page
     const setPage = (page: number) => {
         setResponse(getMockPersonnelPage(basePersonnel, page, pageSize));
     };

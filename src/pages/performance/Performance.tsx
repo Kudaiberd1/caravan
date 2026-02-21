@@ -3,7 +3,7 @@ import Navbar from "../../layouts/Navbar.tsx";
 import filterIcon from "../../assets/icons/filterIcon.svg";
 import downloadIcon from "../../assets/icons/downloadIcon.svg";
 import {departments, mockPersonnel} from "../../data.ts";
-import {useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import TabSwitcher from "../../components/TabSwitcher.tsx";
 import backIcon from "../../assets/icons/backIcon.svg";
 import Footer from "../../layouts/Footer.tsx";
@@ -18,13 +18,56 @@ import {useAdvancedFilters} from "../../hooks/useAdvancedFilters.ts";
 import PersonnelTable from "./components/PersonnelTable.tsx";
 import Pagination from "./components/Pagination.tsx";
 import SelectedEmployeesBar from "./components/SelectedEmployeesBar.tsx";
+
 const Performance = () => {
 
     const [activeTab, setActiveTab] = useState<number>(1);
     const [criticalSearch, setCriticalSearch] = useState<string>("");
     const [isChecking, setIsChecking] = useState<boolean>(false);
 
-    const { response, setPage } = usePersonnelFilters({
+    const [feedbackOpen, setFeedbackOpen] = useState(false);
+    const [feedbackSent, setFeedbackSent] = useState(false);
+    const [feedbackText, setFeedbackText] = useState<string>("");
+
+    const [whatsAppOpen, setWhatsAppOpen] = useState(false);
+    const [whatsAppSent, setWhatsAppSent] = useState(false);
+    const [whatsAppText, setWhatsAppText] = useState<string>("");
+
+    const [recipientIds, setRecipientIds] = useState<string[]>([]);
+
+    const openFeedback = (ids: string[]) => {
+        setRecipientIds(ids);
+        setFeedbackText("");
+        setFeedbackSent(false);
+        setFeedbackOpen(true);
+    };
+
+    const openWhatsApp = (ids: string[]) => {
+        setRecipientIds(ids);
+        setWhatsAppText("");
+        setWhatsAppSent(false);
+        setWhatsAppOpen(true);
+    };
+
+    const closeAllPopups = () => {
+        setFeedbackOpen(false);
+        setWhatsAppOpen(false);
+        setFeedbackSent(false);
+        setWhatsAppSent(false);
+        setFeedbackText("");
+        setWhatsAppText("");
+        setRecipientIds([]);
+    };
+
+    useEffect(() => {
+        const onKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape") closeAllPopups();
+        };
+        window.addEventListener("keydown", onKeyDown);
+        return () => window.removeEventListener("keydown", onKeyDown);
+    }, []);
+
+    const {response, setPage} = usePersonnelFilters({
         data: mockPersonnel,
         activeTab,
         search: criticalSearch,
@@ -68,6 +111,14 @@ const Performance = () => {
         return `${firstName} и еще ${selectedManagerIds.length - 1}`;
     }, [managerOptions, selectedManagerIds]);
 
+    const selectedRecipients = useMemo(() => {
+        const ids = recipientIds.length ? recipientIds : selectedRows;
+        return ids
+            .map((id) => mockPersonnel.find((p) => p.id === id))
+            .filter((p): p is (typeof mockPersonnel)[number] => Boolean(p))
+            .map((p) => ({id: p.id, label: p.fullName}));
+    }, [recipientIds, selectedRows]);
+
 
     return (
         <div>
@@ -89,7 +140,10 @@ const Performance = () => {
                             </button>
                             <button
                                 className={"px-4 py-2 bg-[rgb(49,57,91)] text-white text-sm rounded-lg my-auto transition-all duration-200 hover:scale-101 hover:shadow-lg hover:bg-[rgb(40,48,80)]"}
-                                onClick={() => { setAdditionalFilter((v) => !v); setIsChecking(false); }}
+                                onClick={() => {
+                                    setAdditionalFilter((v) => !v);
+                                    setIsChecking(false);
+                                }}
                             >
                                 <img src={filterIcon} alt="filter" className={"inline-block mr-2"}/>
                                 Расширенные фильтры
@@ -98,9 +152,9 @@ const Performance = () => {
                     </div>
 
                     <div className={"mt-[20px] px-[20px]"}>
-                        <div className={"grid grid-cols-6 grid-rows-5 gap-4"}>
+                        <div className={"grid grid-cols-6 grid-rows-6 gap-4"}>
 
-                            <div className={"col-span-4 row-span-5"}>
+                            <div className={"col-span-4 row-span-6"}>
                                 {additionalFilter &&
                                     <div className={"p-[20px] bg-white mb-4 rounded-xl border border-gray-200"}>
                                         <div className={"flex font-[450] justify-between items-center"}>
@@ -181,6 +235,8 @@ const Performance = () => {
                                             activeTab={activeTab}
                                             selectedRows={selectedRows}
                                             selectedManagerIds={selectedManagerIds}
+                                            setSelectedRows={setSelectedRows}
+                                            setSelectedManagerIds={setSelectedManagerIds}
                                             onToggleRow={toggleSelectedRows}
                                             onToggleManager={toggleSelectedManager}
                                         />
@@ -225,20 +281,23 @@ const Performance = () => {
                                         count={selectedRows.length}
                                         selectedIds={selectedRows}
                                         onPdf={(ids) => console.log("PDF report:", ids)}
-                                        onWhatsapp={(ids) => console.log("WhatsApp broadcast:", ids)}
-                                        onFeedback={(ids) => console.log("Send feedback:", ids)}
+                                        onWhatsapp={openWhatsApp}
+                                        onFeedback={openFeedback}
                                     />
                                 )}
                             </div>
 
                             {/* Block 1 */}
-                            <div className={"col-span-2 row-span-2 border border-gray-200 rounded-xl bg-white p-5"}>
+                            <div className={"col-span-2 row-span-3 border border-gray-200 rounded-xl bg-white p-5"}>
                                 <div className={"flex items-center justify-between"}>
                                     <h2 className={"text-[16px] font-[450] mb-2"}>
                                         {isChecking ? "Сравнение команд" : "Сравнение департамента"}
                                     </h2>
-                                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M7.27796 12.1299H8.89529V7.27793H7.27796V12.1299ZM8.08662 5.66061C8.08662 5.66061 8.1439 5.66061 8.25846 5.66061C8.37302 5.66061 8.5078 5.58311 8.6628 5.42812C8.81779 5.27312 8.89529 5.08107 8.89529 4.85194C8.89529 4.62282 8.81779 4.43077 8.6628 4.27577C8.5078 4.12078 8.31575 4.04328 8.08662 4.04328C7.8575 4.04328 7.66545 4.12078 7.51045 4.27577C7.35546 4.43077 7.27796 4.62282 7.27796 4.85194C7.27796 5.08107 7.35546 5.27312 7.51045 5.42812C7.66545 5.58311 7.8575 5.66061 8.08662 5.66061ZM8.08662 16.1732C6.96797 16.1732 5.91671 15.9609 4.93284 15.5364C3.94897 15.1118 3.09313 14.5357 2.36534 13.8079C1.63754 13.0801 1.06137 12.2242 0.636822 11.2404C0.212274 10.2565 0 9.20524 0 8.08659C0 6.96794 0.212274 5.91668 0.636822 4.93281C1.06137 3.94894 1.63754 3.0931 2.36534 2.36531C3.09313 1.63751 3.94897 1.06134 4.93284 0.636791C5.91671 0.212244 6.96797 -3.05176e-05 8.08662 -3.05176e-05C9.20527 -3.05176e-05 10.2565 0.212244 11.2404 0.636791C12.2243 1.06134 13.0801 1.63751 13.8079 2.36531C14.5357 3.0931 15.1119 3.94894 15.5364 4.93281C15.961 5.91668 16.1732 6.96794 16.1732 8.08659C16.1732 9.20524 15.961 10.2565 15.5364 11.2404C15.1119 12.2242 14.5357 13.0801 13.8079 13.8079C13.0801 14.5357 12.2243 15.1118 11.2404 15.5364C10.2565 15.9609 9.20527 16.1732 8.08662 16.1732ZM8.08662 14.5559C9.89264 14.5559 11.4224 13.9292 12.6758 12.6758C13.9292 11.4223 14.5559 9.89261 14.5559 8.08659C14.5559 6.28058 13.9292 4.75086 12.6758 3.49743C11.4224 2.24401 9.89264 1.61729 8.08662 1.61729C6.28061 1.61729 4.75089 2.24401 3.49746 3.49743C2.24404 4.75086 1.61732 6.28058 1.61732 8.08659C1.61732 9.89261 2.24404 11.4223 3.49746 12.6758C4.75089 13.9292 6.28061 14.5559 8.08662 14.5559Z" fill="#9CA3AF"/>
+                                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M7.27796 12.1299H8.89529V7.27793H7.27796V12.1299ZM8.08662 5.66061C8.08662 5.66061 8.1439 5.66061 8.25846 5.66061C8.37302 5.66061 8.5078 5.58311 8.6628 5.42812C8.81779 5.27312 8.89529 5.08107 8.89529 4.85194C8.89529 4.62282 8.81779 4.43077 8.6628 4.27577C8.5078 4.12078 8.31575 4.04328 8.08662 4.04328C7.8575 4.04328 7.66545 4.12078 7.51045 4.27577C7.35546 4.43077 7.27796 4.62282 7.27796 4.85194C7.27796 5.08107 7.35546 5.27312 7.51045 5.42812C7.66545 5.58311 7.8575 5.66061 8.08662 5.66061ZM8.08662 16.1732C6.96797 16.1732 5.91671 15.9609 4.93284 15.5364C3.94897 15.1118 3.09313 14.5357 2.36534 13.8079C1.63754 13.0801 1.06137 12.2242 0.636822 11.2404C0.212274 10.2565 0 9.20524 0 8.08659C0 6.96794 0.212274 5.91668 0.636822 4.93281C1.06137 3.94894 1.63754 3.0931 2.36534 2.36531C3.09313 1.63751 3.94897 1.06134 4.93284 0.636791C5.91671 0.212244 6.96797 -3.05176e-05 8.08662 -3.05176e-05C9.20527 -3.05176e-05 10.2565 0.212244 11.2404 0.636791C12.2243 1.06134 13.0801 1.63751 13.8079 2.36531C14.5357 3.0931 15.1119 3.94894 15.5364 4.93281C15.961 5.91668 16.1732 6.96794 16.1732 8.08659C16.1732 9.20524 15.961 10.2565 15.5364 11.2404C15.1119 12.2242 14.5357 13.0801 13.8079 13.8079C13.0801 14.5357 12.2243 15.1118 11.2404 15.5364C10.2565 15.9609 9.20527 16.1732 8.08662 16.1732ZM8.08662 14.5559C9.89264 14.5559 11.4224 13.9292 12.6758 12.6758C13.9292 11.4223 14.5559 9.89261 14.5559 8.08659C14.5559 6.28058 13.9292 4.75086 12.6758 3.49743C11.4224 2.24401 9.89264 1.61729 8.08662 1.61729C6.28061 1.61729 4.75089 2.24401 3.49746 3.49743C2.24404 4.75086 1.61732 6.28058 1.61732 8.08659C1.61732 9.89261 2.24404 11.4223 3.49746 12.6758C4.75089 13.9292 6.28061 14.5559 8.08662 14.5559Z"
+                                            fill="#9CA3AF"/>
                                     </svg>
                                 </div>
                                 <SpiderChart
@@ -256,22 +315,28 @@ const Performance = () => {
 
                             {/* Block 2 */}
                             <div className={"col-span-2 row-span-2 border border-gray-200 rounded-xl bg-white p-5"}>
-                                <h2 className={"text-[16px] font-semibold mb-2"}>Отклонение в операциях по добыче полезных ископаемых</h2>
+                                <h2 className={"text-[16px] font-semibold mb-2"}>Отклонение в операциях по добыче
+                                    полезных ископаемых</h2>
                                 <p className={"text-xs text-gray-500"}>Среднесуточное коллективное отклонение.</p>
-                                <DivergingBarChart />
+                                <DivergingBarChart/>
                             </div>
 
                             {/* Block 3 */}
-                            <div className={"col-span-2 row-span-1 rounded-xl bg-[rgb(76,91,135)] p-6 text-white flex flex-col justify-between"}>
+                            <div
+                                className={"col-span-2 rounded-xl bg-[rgb(76,91,135)] p-6 text-white flex flex-col justify-between"}>
 
                                 <div className={"flex items-start justify-between"}>
                                     <div className={"h-6 w-6 rounded-lg flex items-center justify-center"}>
-                                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M3.23465 11.3213H4.85197V7.27795H3.23465V11.3213ZM9.70395 11.3213H11.3213V3.23464H9.70395V11.3213ZM6.4693 11.3213H8.08662V8.89527H6.4693V11.3213ZM6.4693 7.27795H8.08662V5.66062H6.4693V7.27795ZM1.61732 14.5559C1.17256 14.5559 0.791815 14.3975 0.475089 14.0808C0.158363 13.7641 0 13.3833 0 12.9386V1.61731C0 1.17255 0.158363 0.791801 0.475089 0.475076C0.791815 0.158349 1.17256 -1.33514e-05 1.61732 -1.33514e-05H12.9386C13.3834 -1.33514e-05 13.7641 0.158349 14.0808 0.475076C14.3976 0.791801 14.5559 1.17255 14.5559 1.61731V12.9386C14.5559 13.3833 14.3976 13.7641 14.0808 14.0808C13.7641 14.3975 13.3834 14.5559 12.9386 14.5559H1.61732ZM1.61732 12.9386H12.9386V1.61731H1.61732V12.9386Z" fill="white"/>
+                                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M3.23465 11.3213H4.85197V7.27795H3.23465V11.3213ZM9.70395 11.3213H11.3213V3.23464H9.70395V11.3213ZM6.4693 11.3213H8.08662V8.89527H6.4693V11.3213ZM6.4693 7.27795H8.08662V5.66062H6.4693V7.27795ZM1.61732 14.5559C1.17256 14.5559 0.791815 14.3975 0.475089 14.0808C0.158363 13.7641 0 13.3833 0 12.9386V1.61731C0 1.17255 0.158363 0.791801 0.475089 0.475076C0.791815 0.158349 1.17256 -1.33514e-05 1.61732 -1.33514e-05H12.9386C13.3834 -1.33514e-05 13.7641 0.158349 14.0808 0.475076C14.3976 0.791801 14.5559 1.17255 14.5559 1.61731V12.9386C14.5559 13.3833 14.3976 13.7641 14.0808 14.0808C13.7641 14.3975 13.3834 14.5559 12.9386 14.5559H1.61732ZM1.61732 12.9386H12.9386V1.61731H1.61732V12.9386Z"
+                                                fill="white"/>
                                         </svg>
                                     </div>
 
-                                    <div className={"px-4 py-1.5 rounded-full bg-white/20 text-xs font-semibold tracking-wide"}>
+                                    <div
+                                        className={"px-4 py-1.5 rounded-full bg-white/20 text-xs font-semibold tracking-wide"}>
                                         ДЕПАРТАМЕНТ ЗДРАВООХРАНЕНИЯ
                                     </div>
                                 </div>
@@ -290,6 +355,238 @@ const Performance = () => {
                         </div>
                     </div>
                 </div>
+                {/* Feedback popup */}
+                {feedbackOpen && (
+                    <div className={"fixed inset-0 z-[999] bg-black/40 flex items-center justify-center px-4"}>
+                        <div className={"w-full max-w-[760px] rounded-2xl bg-white shadow-2xl overflow-hidden"}>
+                            <div className={"flex items-center justify-between px-6 py-4 border-b border-gray-200"}>
+                                <h3 className={"text-lg font-semibold"}>Отправить отзыв</h3>
+                                <button
+                                    type="button"
+                                    className={"h-10 w-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center"}
+                                    onClick={closeAllPopups}
+                                    aria-label="close"
+                                >
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M18 6L6 18" stroke="#111827" strokeWidth="2" strokeLinecap="round"/>
+                                        <path d="M6 6L18 18" stroke="#111827" strokeWidth="2" strokeLinecap="round"/>
+                                    </svg>
+                                </button>
+                            </div>
+
+                            {!feedbackSent ? (
+                                <div className={"px-6 py-5"}>
+                                    <div className={"flex items-start gap-3"}>
+                                        <div className={"text-sm text-gray-600 w-[56px] pt-2"}>Для:</div>
+                                        <div className={"flex flex-wrap gap-2"}>
+                                            {selectedRecipients.map((r) => (
+                                                <div key={r.id}
+                                                     className={"inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gray-200 bg-white text-xs"}>
+                                                    <span className={"text-gray-700"}>{r.label}</span>
+                                                    <button
+                                                        type="button"
+                                                        className={"text-red-500 hover:text-red-600"}
+                                                        onClick={() => setRecipientIds((prev) => prev.filter((id) => id !== r.id))}
+                                                        aria-label="remove"
+                                                    >
+                                                        ×
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className={"mt-5"}>
+                                        <div className={"text-sm text-gray-700 mb-2"}>Описание:</div>
+                                        <textarea
+                                            value={feedbackText}
+                                            onChange={(e) => setFeedbackText(e.target.value)}
+                                            placeholder={""}
+                                            className={"w-full min-h-[44px] max-h-[140px] resize-none border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-200"}
+                                        />
+                                    </div>
+
+                                    <div className={"mt-6 flex items-center justify-between"}>
+                                        <button
+                                            type="button"
+                                            className={"px-8 py-2.5 rounded-full bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200"}
+                                            onClick={closeAllPopups}
+                                        >
+                                            Отменить
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            className={"px-8 py-2.5 rounded-full bg-[rgb(49,57,91)] text-white text-sm font-semibold hover:bg-[rgb(40,48,80)] inline-flex items-center gap-2"}
+                                            onClick={() => setFeedbackSent(true)}
+                                            disabled={selectedRecipients.length === 0 || !feedbackText}
+                                        >
+                                            Отправить
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M5 12h12" stroke="currentColor" strokeWidth="2"
+                                                      strokeLinecap="round"/>
+                                                <path d="M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2"
+                                                      strokeLinecap="round" strokeLinejoin="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className={"px-6 py-10 text-center"}>
+                                    <div className={"text-lg font-semibold"}>Отзыв успешно отправлен</div>
+                                    <div className={"mt-4 flex justify-center"}>
+                                        <div
+                                            className={"h-14 w-14 rounded-2xl bg-green-600 flex items-center justify-center"}>
+                                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M20 6L9 17l-5-5" stroke="white" strokeWidth="2.5"
+                                                      strokeLinecap="round" strokeLinejoin="round"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+
+                                    <div className={"mt-6 flex items-center justify-center gap-2 flex-wrap"}>
+                                        <div className={"text-sm text-gray-600 mr-2"}>Для:</div>
+                                        {selectedRecipients.map((r) => (
+                                            <div key={r.id}
+                                                 className={"inline-flex items-center px-3 py-1 rounded-full border border-gray-200 bg-white text-xs text-gray-700"}>
+                                                {r.label}
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className={"mt-8"}>
+                                        <button
+                                            type="button"
+                                            className={"px-10 py-2.5 rounded-full bg-[rgb(49,57,91)] text-white text-sm font-semibold hover:bg-[rgb(40,48,80)]"}
+                                            onClick={closeAllPopups}
+                                        >
+                                            OK
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* WhatsApp popup */}
+                {whatsAppOpen && (
+                    <div className={"fixed inset-0 z-[999] bg-black/40 flex items-center justify-center px-4"}>
+                        <div className={"w-full max-w-[760px] rounded-2xl bg-white shadow-2xl overflow-hidden"}>
+                            <div className={"flex items-center justify-between px-6 py-4 border-b border-gray-200"}>
+                                <h3 className={"text-lg font-semibold"}>Whatsapp рассылка</h3>
+                                <button
+                                    type="button"
+                                    className={"h-10 w-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center"}
+                                    onClick={closeAllPopups}
+                                    aria-label="close"
+                                >
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M18 6L6 18" stroke="#111827" strokeWidth="2" strokeLinecap="round"/>
+                                        <path d="M6 6L18 18" stroke="#111827" strokeWidth="2" strokeLinecap="round"/>
+                                    </svg>
+                                </button>
+                            </div>
+
+                            {!whatsAppSent ? (
+                                <div className={"px-6 py-5"}>
+                                    <div className={"flex items-start gap-3"}>
+                                        <div className={"text-sm text-gray-600 w-[56px] pt-2"}>Для:</div>
+                                        <div className={"flex flex-wrap gap-2"}>
+                                            {selectedRecipients.map((r) => (
+                                                <div key={r.id}
+                                                     className={"inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gray-200 bg-white text-xs"}>
+                                                    <span className={"text-gray-700"}>{r.label}</span>
+                                                    <button
+                                                        type="button"
+                                                        className={"text-red-500 hover:text-red-600"}
+                                                        onClick={() => setRecipientIds((prev) => prev.filter((id) => id !== r.id))}
+                                                        aria-label="remove"
+                                                    >
+                                                        ×
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className={"mt-5"}>
+                                        <div className={"text-sm text-gray-700 mb-2"}>Сообщение:</div>
+                                        <textarea
+                                            value={whatsAppText}
+                                            onChange={(e) => setWhatsAppText(e.target.value)}
+                                            className={"w-full min-h-[44px] max-h-[140px] resize-none border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-200"}
+                                        />
+                                    </div>
+
+                                    <div className={"mt-6 flex items-center justify-between"}>
+                                        <button
+                                            type="button"
+                                            className={"px-8 py-2.5 rounded-full bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200"}
+                                            onClick={closeAllPopups}
+                                        >
+                                            Отменить
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            className={"px-8 py-2.5 rounded-full bg-[rgb(49,57,91)] text-white text-sm font-semibold hover:bg-[rgb(40,48,80)] inline-flex items-center gap-2"}
+                                            onClick={() => setWhatsAppSent(true)}
+                                            disabled={selectedRecipients.length === 0 || !whatsAppText}
+                                        >
+                                            Отправить
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M5 12h12" stroke="currentColor" strokeWidth="2"
+                                                      strokeLinecap="round"/>
+                                                <path d="M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2"
+                                                      strokeLinecap="round" strokeLinejoin="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className={"px-6 py-10 text-center"}>
+                                    <div className={"text-lg font-semibold"}>Сообщение успешно отправлено</div>
+                                    <div className={"mt-4 flex justify-center"}>
+                                        <div
+                                            className={"h-14 w-14 rounded-2xl bg-green-600 flex items-center justify-center"}>
+                                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M20 6L9 17l-5-5" stroke="white" strokeWidth="2.5"
+                                                      strokeLinecap="round" strokeLinejoin="round"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+
+                                    <div className={"mt-6 flex items-center justify-center gap-2 flex-wrap"}>
+                                        <div className={"text-sm text-gray-600 mr-2"}>Для:</div>
+                                        {selectedRecipients.map((r) => (
+                                            <div key={r.id}
+                                                 className={"inline-flex items-center px-3 py-1 rounded-full border border-gray-200 bg-white text-xs text-gray-700"}>
+                                                {r.label}
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className={"mt-8"}>
+                                        <button
+                                            type="button"
+                                            className={"px-10 py-2.5 rounded-full bg-[rgb(49,57,91)] text-white text-sm font-semibold hover:bg-[rgb(40,48,80)]"}
+                                            onClick={closeAllPopups}
+                                        >
+                                            OK
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
                 <Footer/>
             </div>
         </div>

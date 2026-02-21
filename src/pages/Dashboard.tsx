@@ -11,7 +11,7 @@ import Footer from "../layouts/Footer.tsx";
 import TabSwitcher from "../components/TabSwitcher.tsx";
 import SmoothAreaChart from "../components/charts/SmoothAreaChart.tsx";
 import {activeAnomaliesMock, criticalDeviationsMock, departments, mockDepartments} from "../data.ts";
-import DateRangePill from "../components/DateRangePill.tsx";
+import DateRangePillForWeek from "../components/DateRangePillForWeek.tsx";
 import MultiSelectDropdown from "../components/MultiSelectDropdown.tsx";
 import DepartmentLinesChart from "../components/charts/DepartmentLinesChart.tsx";
 import MainNavbar from "../layouts/MainNavbar.tsx";
@@ -189,7 +189,7 @@ const Dashboard = () => {
                                     <div className={"px-8 mb-auto pb-19"}>
                                         {/* Controllers */}
                                         <div className={"flex justify-between mb-7"}>
-                                            <DateRangePill />
+                                            <DateRangePillForWeek />
                                             <MultiSelectDropdown
                                                 title="Департаменты"
                                                 options={departments}
@@ -271,7 +271,7 @@ const Dashboard = () => {
 
                             <div className={"border-t border-gray-200"} />
 
-                            <div className={"px-7 py-3 flex-1 overflow-y-auto"}>
+                            <div className={"px-7 flex-1 overflow-y-auto"}>
                                 <table className={"w-full border-collapse"}>
                                     <thead>
                                     <tr className={"text-left text-[11px] uppercase tracking-wide text-gray-500 sticky top-0 bg-white"}>

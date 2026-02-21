@@ -17,7 +17,6 @@ export function useSelection({ activeTab, isChecking }: UseSelectionArgs) {
         setSelectedManagerIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
     };
 
-    // reset logic when switching main tab
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setSelectedRows([]);
