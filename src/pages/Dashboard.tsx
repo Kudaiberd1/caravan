@@ -1,5 +1,4 @@
 import Sidebar from "../layouts/Sidebar.tsx";
-import Navbar from "../layouts/Navbar.tsx";
 import docIcon from "../assets/icons/docIcon.svg"
 import statIcon from "../assets/icons/statIcon.svg"
 import alertIcon from "../assets/icons/alert.svg"
@@ -15,6 +14,7 @@ import {activeAnomaliesMock, criticalDeviationsMock, departments, mockDepartment
 import DateRangePill from "../components/DateRangePill.tsx";
 import MultiSelectDropdown from "../components/MultiSelectDropdown.tsx";
 import DepartmentLinesChart from "../components/charts/DepartmentLinesChart.tsx";
+import MainNavbar from "../layouts/MainNavbar.tsx";
 
 export type DepartmentStaffing = {
     id: string;
@@ -52,10 +52,10 @@ const Dashboard = () => {
     return (
         <div>
             <Sidebar/>
-            <Navbar/>
+            <MainNavbar/>
             <div className="ml-[240px] pt-[64px] min-h-screen bg-[rgb(241,242,245)] flex flex-col">
                 <div className="flex-1">
-                    <div className={"flex justify-between px-[20px] py-[20px]"}>
+                    <div className={"flex justify-between p-[20px]"}>
                         <div className={"space-y-2"}>
                             <h1 className={"text-3xl font-semibold"}>Оперативная операция</h1>
                             <p className={"text-sm text-gray-500"}> Глобальная производительность сайта и плотность
@@ -171,7 +171,7 @@ const Dashboard = () => {
                                 {active === 1 &&
                                     <div className={"flex items-center"}>
                                         <p className={"text-xl font-semibold text-[#475784]"}> Алмалы - 480 </p>
-                                        <img src={usersIcon} className={"h-4"}/>
+                                        <img src={usersIcon} className={"ms-2 h-4"}/>
                                     </div>
                                 }
                             </div>
@@ -371,7 +371,7 @@ const Dashboard = () => {
                                                             <div className={"text-[12px] font-semibold " + badgeClass}>{item.status}</div>
                                                         </div>
 
-                                                        <div className={"mt-3 flex items-center gap-2 flex-wrap"}>
+                                                        <div className={"mt-3 items-center gap-2 flex-wrap grid grid-cols-3"}>
                                                             {item.actions.map((a, idx) => {
                                                                 const cls =
                                                                     a.variant === "danger"
@@ -379,8 +379,8 @@ const Dashboard = () => {
                                                                         : a.variant === "warning"
                                                                             ? "bg-amber-500 text-white border-amber-500"
                                                                             : a.variant === "primary"
-                                                                                ? "border-gray-200 text-gray-900 bg-white"
-                                                                                : "border-gray-200 text-gray-400 bg-gray-50";
+                                                                                ? "border-gray-200 text-gray-900 bg-white col-span-2"
+                                                                                : "border-gray-200 text-gray-400 bg-gray-50 col-span-1";
 
                                                                 return (
                                                                     <button

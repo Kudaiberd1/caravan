@@ -42,6 +42,17 @@ const Navbar = () => {
             <div />
 
             <div className={"flex items-center gap-4"}>
+                <select
+                    className={
+                        "h-9 rounded-md border border-black/10 px-3 text-sm " +
+                        "bg-white outline-none focus:border-[#5F6FA3]"
+                    }
+                >
+                    <option>Алматы</option>
+                    <option>Алмалы</option>
+                    <option>Ашыктас</option>
+                    <option>Майкудык</option>
+                </select>
 
                 <button className={"text-[#5A667A] hover:text-[#1F2A44] cursor-pointer"}>
                     <img src={notificationIcon} alt={"notifications"} />

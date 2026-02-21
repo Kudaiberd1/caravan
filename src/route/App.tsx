@@ -6,7 +6,7 @@ import ResetPassword from "../pages/login/ResetPassword.tsx";
 import SuccessReset from "../pages/login/SuccessReset.tsx";
 import ProtectedRoute from "./ProtectedRoute.tsx";
 import Dashboard from "../pages/Dashboard.tsx";
-import Performance from "../pages/Performance.tsx";
+import Performance from "../pages/performance/Performance.tsx";
 import Reports from "../pages/Reports.tsx";
 
 function App() {
