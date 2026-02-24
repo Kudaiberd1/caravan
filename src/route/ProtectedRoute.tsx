@@ -1,4 +1,4 @@
-import {Navigate, Outlet} from "react-router-dom";
+import {Outlet} from "react-router-dom";
 
 function isTokenExpired(token: string): boolean {
     try {
@@ -14,18 +14,20 @@ function isTokenExpired(token: string): boolean {
 }
 
 export default function ProtectedRoute() {
-    const token = localStorage.getItem('accessToken');
-    const auth=true;
+    // const token = localStorage.getItem('accessToken');
 
-    if (!token && !auth) {
-        return <Navigate to="/login" replace />;
-    }
-
-
-
-    if (isTokenExpired(token) && !auth) {
-        localStorage.removeItem('accessToken');
-        return <Navigate to="/login" replace />;
-    }
     return <Outlet />;
+
+    isTokenExpired("")
+
+    // if (!token) {
+    //     return <Navigate to="/login" replace />;
+    // }
+    //
+    //
+    //
+    // if (isTokenExpired(token)) {
+    //     localStorage.removeItem('accessToken');
+    //     return <Navigate to="/login" replace />;
+    // }
 }
