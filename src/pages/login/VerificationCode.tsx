@@ -1,6 +1,6 @@
 import LoginCard from "../../components/LoginCard.tsx";
 import {useNavigate} from "react-router-dom";
-import {useMemo, useRef, useState} from "react";
+import {useMemo, useRef, useState, type KeyboardEvent, type ClipboardEvent} from "react";
 
 const VerificationCode = () => {
     const navigate = useNavigate();
@@ -50,7 +50,7 @@ const VerificationCode = () => {
         }
     };
 
-    const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    const handleKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Backspace") {
             if (code[index]) {
                 e.preventDefault();
@@ -74,7 +74,7 @@ const VerificationCode = () => {
         }
     };
 
-    const handlePaste = (index: number, e: React.ClipboardEvent<HTMLInputElement>) => {
+    const handlePaste = (index: number, e: ClipboardEvent<HTMLInputElement>) => {
         const text = e.clipboardData.getData("text");
         if (!text) return;
         e.preventDefault();
@@ -104,7 +104,9 @@ const VerificationCode = () => {
                     {Array.from({length}).map((_, index) => (
                         <input
                             key={index}
-                            ref={(el) => (inputsRef.current[index] = el)}
+                            ref={(el) => {
+                                inputsRef.current[index] = el;
+                            }}
                             value={code[index]}
                             onChange={(e) => handleChange(index, e.target.value)}
                             onKeyDown={(e) => handleKeyDown(index, e)}

@@ -1,7 +1,6 @@
 import {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import LoginCard from "../../components/LoginCard.tsx";
-import {LoginApi} from "../../api/LoginApi.ts";
 
 const Login = () => {
     const [hasError, setHasError] = useState(0);
