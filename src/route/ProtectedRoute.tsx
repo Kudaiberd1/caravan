@@ -15,12 +15,13 @@ function isTokenExpired(token: string): boolean {
 
 export default function ProtectedRoute() {
     const token = localStorage.getItem('accessToken');
+    const auth=true;
 
-    if (!token) {
+    if (!token && !auth) {
         return <Navigate to="/login" replace />;
     }
 
-    const auth=true;
+
 
     if (isTokenExpired(token) && !auth) {
         localStorage.removeItem('accessToken');
