@@ -1,5 +1,5 @@
 import Sidebar from "../layouts/Sidebar.tsx";
-import docIcon from "../assets/icons/docIcon.svg"
+import downloadIcon from "../assets/icons/downloadIconWhite.svg";
 import statIcon from "../assets/icons/statIcon.svg"
 import alertIcon from "../assets/icons/alert.svg"
 import groupIcon from "../assets/icons/groupIcon.svg"
@@ -57,14 +57,15 @@ const Dashboard = () => {
                 <div className="flex-1">
                     <div className={"flex justify-between p-[20px]"}>
                         <div className={"space-y-2"}>
-                            <h1 className={"text-3xl font-semibold"}>Оперативная операция</h1>
+                            <h1 className={"text-3xl font-semibold"}>Контроль персонала</h1>
                             <p className={"text-sm text-gray-500"}> Глобальная производительность сайта и плотность
                                 критически важного персонала </p>
                         </div>
                         <button
-                            className={"px-4 py-2 bg-[rgb(49,57,91)] text-white text-sm rounded-lg my-auto transition-all duration-200 hover:scale-101 hover:shadow-lg hover:bg-[rgb(40,48,80)]"}>
-                            <img src={docIcon} className={"inline-block mr-2"}/>
-                            Исполнительный отчет
+                            className={"px-4 py-2 bg-[rgb(49,57,91)] text-white text-sm rounded-lg my-auto transition-all duration-200 hover:scale-101 hover:shadow-lg hover:bg-[rgb(40,48,80)]"}
+                        >
+                            <img src={downloadIcon} alt="filter" className={"h-3 inline-block mr-2"}/>
+                            Экспорт отчета
                         </button>
                     </div>
 
@@ -72,7 +73,7 @@ const Dashboard = () => {
                         <div className={"border-[2px] border-gray-200 rounded-xl px-[20px] pt-[20px] bg-white w-full"}>
                             <div className={"flex justify-between items-start mb-[18px]"}>
                                 <div className={"space-y-[7px]"}>
-                                    <p className={"text-gray-500 font-semibold text-sm"}> Соблюдение графика смен </p>
+                                    <p className={"text-gray-500 font-semibold text-sm uppercase"}> Соблюдение графика смен </p>
                                     <h1 className={"text-[28px] font-bold"}> 98.5% </h1>
                                     <p className={"text-gray-500 text-[12px]"}> Совокупная производительность
                                         площадки </p>
@@ -86,7 +87,7 @@ const Dashboard = () => {
                         <div className={"border-[2px] border-gray-200 rounded-xl px-[20px] pt-[20px] bg-white w-full"}>
                             <div className={"flex justify-between items-start mb-[15px]"}>
                                 <div className={"space-y-[7px]"}>
-                                    <p className={"text-gray-500 font-semibold text-sm"}> Критические отклонения </p>
+                                    <p className={"text-gray-500 font-semibold text-sm uppercase"}> Критические отклонения </p>
                                     <h1 className={"text-[28px] font-bold"}> 14 <span
                                         className={"text-gray-500 text-[15px] font-normal"}> Оповещений </span></h1>
                                     <p className={"text-gray-500 text-[12px]"}>
@@ -100,7 +101,7 @@ const Dashboard = () => {
                         <div className={"border-[2px] border-gray-200 rounded-xl px-[20px] pt-[20px] bg-white w-full"}>
                             <div className={"flex justify-between items-start mb-[18px]"}>
                                 <div className={"space-y-[7px]"}>
-                                    <p className={"text-gray-500 font-semibold text-sm"}> На Локации сейчас </p>
+                                    <p className={"text-gray-500 font-semibold text-sm uppercase"}> На Локации сейчас </p>
                                     <h1 className={"text-[28px] font-bold"}> 428 </h1>
                                     <p className={"text-gray-500 text-[12px]"}> Распределено по 5 зонам </p>
                                 </div>
@@ -110,7 +111,7 @@ const Dashboard = () => {
 
                         <div className={"border-[2px] border-gray-200 rounded-xl px-[20px] pt-[20px] bg-white w-full"}>
                             <div className={"flex items-start justify-between mb-4"}>
-                                <p className={"text-gray-500 font-semibold text-sm"}>
+                                <p className={"text-gray-500 font-semibold text-sm uppercase"}>
                                     Нарушения по отделам
                                 </p>
 

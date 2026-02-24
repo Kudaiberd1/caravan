@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import notificationIcon from "../assets/icons/notification.svg";
 import {useNavigate} from "react-router-dom";
+import {getUserDetails, type User} from "../services/getUserDetails.ts";
 
 const Navbar = () => {
     const [open, setOpen] = useState(false);
     const wrapperRef = useRef<HTMLDivElement | null>(null);
     const navigate = useNavigate();
+
+    const [user] = useState<User | null>(() => getUserDetails());
 
     useEffect(() => {
         const onDocMouseDown = (e: MouseEvent) => {
@@ -28,6 +31,7 @@ const Navbar = () => {
 
     const handleLogout = () => {
         setOpen(false);
+        localStorage.clear();
         navigate("/login");
     };
 
@@ -64,12 +68,12 @@ const Navbar = () => {
                         onClick={() => setOpen((v) => !v)}
                         className={
                             "cursor-pointer h-9 w-9 rounded-full bg-[#5F6FA3] text-white " +
-                            "flex items-center justify-center text-sm font-medium"
+                            "flex items-center justify-center text-sm font-medium uppercase"
                         }
                         aria-haspopup="menu"
                         aria-expanded={open}
                     >
-                        AD
+                        {user?.firstName[0]}{user?.lastName[0]}
                     </button>
 
                     {open && (

@@ -136,7 +136,7 @@ const Performance = () => {
                             <button
                                 className={"px-4 py-2 bg-white text-[rgb(49,57,91)] text-sm rounded-lg my-auto transition-all duration-200 hover:scale-101 hover:shadow-lg hover:bg-white"}>
                                 <img src={downloadIcon} alt="download" className={"inline-block mr-2"}/>
-                                Экспорт
+                                Экспорт отчета
                             </button>
                             <button
                                 className={"px-4 py-2 bg-[rgb(49,57,91)] text-white text-sm rounded-lg my-auto transition-all duration-200 hover:scale-101 hover:shadow-lg hover:bg-[rgb(40,48,80)]"}
@@ -319,38 +319,6 @@ const Performance = () => {
                                     полезных ископаемых</h2>
                                 <p className={"text-xs text-gray-500"}>Среднесуточное коллективное отклонение.</p>
                                 <DivergingBarChart/>
-                            </div>
-
-                            {/* Block 3 */}
-                            <div
-                                className={"col-span-2 rounded-xl bg-[rgb(76,91,135)] p-6 text-white flex flex-col justify-between"}>
-
-                                <div className={"flex items-start justify-between"}>
-                                    <div className={"h-6 w-6 rounded-lg flex items-center justify-center"}>
-                                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"
-                                             xmlns="http://www.w3.org/2000/svg">
-                                            <path
-                                                d="M3.23465 11.3213H4.85197V7.27795H3.23465V11.3213ZM9.70395 11.3213H11.3213V3.23464H9.70395V11.3213ZM6.4693 11.3213H8.08662V8.89527H6.4693V11.3213ZM6.4693 7.27795H8.08662V5.66062H6.4693V7.27795ZM1.61732 14.5559C1.17256 14.5559 0.791815 14.3975 0.475089 14.0808C0.158363 13.7641 0 13.3833 0 12.9386V1.61731C0 1.17255 0.158363 0.791801 0.475089 0.475076C0.791815 0.158349 1.17256 -1.33514e-05 1.61732 -1.33514e-05H12.9386C13.3834 -1.33514e-05 13.7641 0.158349 14.0808 0.475076C14.3976 0.791801 14.5559 1.17255 14.5559 1.61731V12.9386C14.5559 13.3833 14.3976 13.7641 14.0808 14.0808C13.7641 14.3975 13.3834 14.5559 12.9386 14.5559H1.61732ZM1.61732 12.9386H12.9386V1.61731H1.61732V12.9386Z"
-                                                fill="white"/>
-                                        </svg>
-                                    </div>
-
-                                    <div
-                                        className={"px-4 py-1.5 rounded-full bg-white/20 text-xs font-semibold tracking-wide"}>
-                                        ДЕПАРТАМЕНТ ЗДРАВООХРАНЕНИЯ
-                                    </div>
-                                </div>
-
-                                <div className={"mt-4"}>
-                                    <h2 className={"text-2xl font-bold leading-tight"}>
-                                        Стабильный
-                                    </h2>
-                                    <p className={"mt-3 text-sm text-white/85 leading-relaxed"}>
-                                        Добыча полезных ископаемых ведется с задержкой в пределах 5% от
-                                        запланированной мощности. Обнаружено 3 аномалии.
-                                    </p>
-                                </div>
-
                             </div>
                         </div>
                     </div>

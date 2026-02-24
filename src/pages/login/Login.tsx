@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import LoginCard from "../../components/LoginCard.tsx";
+import {LoginApi} from "../../api/LoginApi.ts";
 
 const Login = () => {
     const [hasError, setHasError] = useState(0);
@@ -16,7 +17,7 @@ const Login = () => {
         console.log("Remember Me:", rememberMe);
     }, []);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!username.trim() && !password.trim()) {
             setHasError(3);
@@ -30,8 +31,15 @@ const Login = () => {
         }
         setHasError(0);
 
-        navigate("/")
-        // ...
+        navigate('/');
+
+        // try{
+        //     const token = await LoginApi(username, password);
+        //     localStorage.setItem("accessToken", JSON.stringify(token));
+        //     navigate('/');
+        // }catch (err){
+        //     alert(err.message)
+        // }
     }
 
     return (

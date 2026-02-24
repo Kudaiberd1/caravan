@@ -4,7 +4,7 @@ import Footer from "../layouts/Footer.tsx";
 import {useMemo, useState} from "react";
 import DateRangePill from "../components/DateRangePill.tsx";
 import downloadIcon from "../assets/icons/downloadIconWhite.svg";
-import { format, parseISO, differenceInCalendarDays } from "date-fns";
+import { format, parseISO } from "date-fns";
 
 interface Props {
     dateFrom: string | null;
@@ -38,7 +38,7 @@ const Reports = () => {
             type: "comment",
             employees: ["Vasiliev B.", "Smirnov A.", "Novikov N."],
             description: "Хорошая работа",
-            createdAtISO: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
+            createdAtISO: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
         },
         {
             id: "r3",

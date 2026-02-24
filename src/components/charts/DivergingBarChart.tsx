@@ -63,14 +63,14 @@ export default function DivergingBarChart() {
                     <div className="flex items-center gap-2">
                         <span className="h-3 w-3 rounded-full bg-[#E35B52]" />
                         <span className="text-sm font-semibold text-[#111827]">
-              несвоевременно
+              недоработки
             </span>
                     </div>
 
                     <div className="flex items-center gap-2">
                         <span className="h-3 w-3 rounded-full bg-[#4F7CF3]" />
                         <span className="text-sm font-semibold text-[#111827]">
-              Через н-к время
+              переработки
             </span>
                     </div>
                 </div>

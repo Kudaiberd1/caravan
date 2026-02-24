@@ -1,8 +1,17 @@
 import logo from "../assets/logo.svg";
+import {useEffect, useState} from "react";
+import api from "../api/axiosInstance.ts";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 const LoginCard = ({children}) => {
+
+    const [connected, setConnected] = useState(false);
+
+    useEffect(() => {
+        api.get("/auth/connection").then(() => setConnected(true)).catch(() => setConnected(false));
+    }, []);
+
     return (
         <div className={"min-h-screen w-full flex md:items-center md:justify-center relative overflow-hidden bg-[#021C3A] md:px-4 md:py-10"}>
             <div className={"absolute inset-0 bg-[radial-gradient(circle_at_0%_80%,rgba(124,58,237,0.40),transparent_55%)]"} />
@@ -10,13 +19,30 @@ const LoginCard = ({children}) => {
             <div className={"absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(59,130,246,0.18),transparent_55%)]"} />
 
             <div className={"hidden md:block absolute bottom-6 right-6 z-20"}>
-                <div className={"flex items-center gap-3 px-5 py-2.5 rounded-full bg-[#0E1A2B]/80 backdrop-blur-md border border-white/10 shadow-lg"}>
+                <div className={
+                    "flex items-center gap-3 px-5 py-2.5 rounded-full backdrop-blur-md border shadow-lg " +
+                    (connected
+                        ? "bg-[#0E1A2B]/80 border-white/10"
+                        : "bg-red-900/40 border-red-500/30")
+                }>
                     <span className={"relative flex h-3 w-3"}>
-                        <span className={"animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"}></span>
-                        <span className={"relative inline-flex rounded-full h-3 w-3 bg-green-500"}></span>
+                        {connected && (
+                            <span className={"animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"}></span>
+                        )}
+                        <span
+                            className={
+                                "relative inline-flex rounded-full h-3 w-3 " +
+                                (connected ? "bg-green-500" : "bg-red-500")
+                            }
+                        ></span>
                     </span>
-                    <span className={"text-sm font-medium text-green-400 tracking-wide"}>
-                        SYSTEM ONLINE
+                    <span
+                        className={
+                            "text-sm font-medium tracking-wide " +
+                            (connected ? "text-green-400" : "text-red-400")
+                        }
+                    >
+                        {connected ? "SYSTEM ONLINE" : "SYSTEM OFFLINE"}
                     </span>
                 </div>
             </div>
