@@ -25,10 +25,10 @@ const SupervisorProfile = () => {
                 <div className="flex-1">
                     <div className={"space-y-2 p-[20px]"}>
                         <p className={"text-sm text-gray-500"}>
-                            <span className={"cursor-pointer hover:text-gray-600"} onClick={() => navigate("/performance")}> Сотрудники </span> {">"} <span className={"text-black"}> Иванов И. </span>
+                            <span className={"cursor-pointer hover:text-gray-600"} onClick={() => navigate("/performance")}> Руководители </span> {">"} <span className={"text-black"}> Иванов И. </span>
                         </p>
                         <div className={"flex justify-between"}>
-                            <h1 className={"text-2xl font-semibold uppercase"}>профиль сотрудника</h1>
+                            <h1 className={"text-2xl font-semibold uppercase"}>профиль руководителя</h1>
                             <div className={"flex gap-3"}>
                                 <MonthPicker month={month} setMonth={setMonth} year={year} setYear={setYear} isOpen={isOpen} setIsOpen={setIsOpen} />
                                 <button
