@@ -1,3 +1,5 @@
+import {useNavigate} from "react-router-dom";
+
 type PersonnelRow = {
   id: string;
   initials: string;
@@ -37,6 +39,8 @@ export default function PersonnelTable({
 
   const anyOnPageSelected = pageIds.some((id) => currentSelected.includes(id));
   const allOnPageSelected = pageIds.length > 0 && pageIds.every((id) => currentSelected.includes(id));
+
+  const navigate = useNavigate();
 
   const toggleSelectAllOnPage = () => {
     if (pageIds.length === 0) return;
@@ -167,7 +171,7 @@ export default function PersonnelTable({
                   </td>
 
                   <td className={"py-4 pr-3"}>
-                    <div className={"cursor-pointer flex items-center gap-3"}>
+                    <div className={"cursor-pointer flex items-center gap-3"} onClick={() => (activeTab === 1 ? navigate(`/user/${row.id}`) : navigate(`/user/supervisor/${row.id}`))}>
                       <div className={"relative"}>
                         <div className={"h-9 w-9 rounded-full bg-indigo-100 flex items-center justify-center text-[12px] font-semibold text-indigo-700"}>
                           {row.initials}
