@@ -1,21 +1,50 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Sidebar from "../layouts/Sidebar.tsx";
 import Navbar from "../layouts/Navbar.tsx";
 import downloadIcon from "../assets/icons/downloadIconWhite.svg";
-import UserCard from "../components/UserCard.tsx";
-import UserStatisticCard from "../components/UserStatisticCard.tsx";
-import MonthPicker from "../components/MonthPicker.tsx";
+import UserCard from "../components/cards/UserCard.tsx";
+import UserStatisticCard from "../components/cards/UserStatisticCard.tsx";
+import MonthPicker from "../components/selectElements/MonthPicker.tsx";
 import UserLineChart from "../components/charts/UserLineChart.tsx";
 import Footer from "../layouts/Footer.tsx";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import UserTimeLineChart from "../components/charts/UserTimeLineChart.tsx";
+import {mockPersonnel, type PersonnelRow} from "../data.ts";
 
 const UserProfile = () => {
+
+    const { id } = useParams<{ id: string }>();
+    const [person, setPerson] = useState<PersonnelRow>();
+
     const [month, setMonth] = useState<string>(new Date().toISOString().slice(0, 7));
     const [isOpen, setIsOpen] = useState(false);
     const [year, setYear] = useState<number>(new Date().getFullYear());
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!id) {
+            navigate("/not-found");
+            return;
+        }
+
+        const found = mockPersonnel.find((p) => String(p.id) === String(id));
+        if (!found) {
+            navigate("/not-found");
+            return;
+        }
+
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setPerson(found);
+    }, [id, navigate]);
+
+    if (person === undefined) {
+        return (
+            <div className="p-6">
+                <p>User not found!</p>
+            </div>
+        );
+    }
 
     return (
         <div>
@@ -41,7 +70,7 @@ const UserProfile = () => {
                         </div>
 
                         <div className={"grid grid-cols-3 gap-6 mt-7"}>
-                            <UserCard who={"user"} />
+                            <UserCard person={person} />
                             <UserStatisticCard />
                         </div>
 
@@ -50,7 +79,7 @@ const UserProfile = () => {
                         </div>
 
                         <div className={"bg-[rgb(41,46,59)] rounded-xl text-white w-full border border-[rgba(255,255,255,0.06)] mt-5"}>
-                            <UserTimeLineChart />
+                            <UserTimeLineChart who={"user"} />
                         </div>
 
                     </div>
