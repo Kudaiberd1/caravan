@@ -34,7 +34,11 @@ const fmtHHmm = (ts: number) => {
     return `${hh}:${mm}`;
 };
 
-const UserTimeLineChart = () => {
+interface Prop {
+    who: string;
+}
+
+const UserTimeLineChart = ({who} : Prop) => {
     const dateISO = "2026-02-04";
 
     const segments: Segment[] = useMemo(
@@ -65,7 +69,7 @@ const UserTimeLineChart = () => {
             backgroundColor: "transparent",
             animation: false,
             title: {
-                text: "Маршрут смены сотрудника: Иванов Иван Иванович (Face ID Tracking)",
+                text: (who==="sup" ? "Маршрут смены руководителя: Иванов Иван Иванович (Face ID Tracking)" : "Маршрут смены сотрудника: Иванов Иван Иванович (Face ID Tracking)"),
                 subtext: "4 февраля 2026 г. • Последовательность движений",
                 left: 14,
                 top: 10,

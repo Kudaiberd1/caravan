@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import type {PersonnelRow} from "../data.ts";
 
 export type PaginatedResponse<T> = {
     content: T[];
@@ -8,20 +9,6 @@ export type PaginatedResponse<T> = {
     totalPages: number;
 };
 
-export type PersonnelRow = {
-    id: string;
-    fullName: string;
-    role: string;
-    position: "sotrudnik" | "rukovoditel";
-
-    initials: string;
-    plan: number;
-    actual: number;
-    pr: number;
-    nr: number;
-    deviation: number;
-    percent: number;
-};
 
 export function getMockPersonnelPage<T>(
     allData: T[],

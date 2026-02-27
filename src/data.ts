@@ -29,8 +29,27 @@ export const mockDepartments: DepartmentStaffing[] = [
 
 export const departments = [
     { id: "general", label: "Генеральная дирекция" },
+    { id: "geology", label: "Геологический департамент" },
+    { id: "internal_control", label: "Департамент внутреннего контроля" },
+    { id: "mining", label: "Департамент горного производства" },
+    { id: "it", label: "Департамент информационных технологий" },
+    { id: "heap_leaching", label: "Департамент кучного выщелачивания" },
+    { id: "logistics", label: "Департамент логистики" },
+    { id: "supply", label: "Департамент материально-технического обеспечения" }
 ];
 
+export const criticalDeviationsMock: CriticalDeviationRow[] = [
+    { id: "1", employee: "Petrov P.", department: "Шахтер", devHours: -15.0, percent: 90.6 },
+    { id: "2", employee: "Ivanov I.", department: "Логистика", devHours: 12.2, percent: 107.4 },
+    { id: "3", employee: "Sidorov S.", department: "Бурение", devHours: -8.5, percent: 94.7 },
+    { id: "4", employee: "Kuznetsov K.", department: "Обслуживание", devHours: 6.1, percent: 103.2 },
+    { id: "5", employee: "Smirnov A.", department: "Безопасность", devHours: -4.2, percent: 97.4 },
+    { id: "6", employee: "Petrov P.", department: "Шахтер", devHours: -15.0, percent: 90.6 },
+    { id: "7", employee: "Ivanov I.", department: "Логистика", devHours: 12.2, percent: 107.4 },
+    { id: "8", employee: "Sidorov S.", department: "Бурение", devHours: -8.5, percent: 94.7 },
+    { id: "9", employee: "Kuznetsov K.", department: "Обслуживание", devHours: 6.1, percent: 103.2 },
+    { id: "10", employee: "Smirnov A.", department: "Безопасность", devHours: -4.2, percent: 97.4 },
+];
 export type ActiveAnomaly = {
     id: string;
     title: string;
@@ -75,6 +94,14 @@ export const activeAnomaliesMock: ActiveAnomaly[] = [
         ],
     },
 ];
+
+export type PaginatedResponse<T> = {
+    content: T[];
+    page: number;          // current page (1-based)
+    size: number;          // items per page
+    totalElements: number; // total records in DB
+    totalPages: number;
+};
 
 export type PersonnelRow = {
     id: string;

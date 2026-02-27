@@ -1,17 +1,6 @@
 import {useNavigate} from "react-router-dom";
+import type {PersonnelRow} from "../../../data.ts";
 
-type PersonnelRow = {
-    id: string;
-    initials: string;
-    fullName: string;
-    role: string;
-    plan: number;
-    actual: number;
-    pr: number;
-    nr: number;
-    deviation: number;
-    percent: number;
-};
 
 type PersonnelTableProps = {
     rows: PersonnelRow[];
