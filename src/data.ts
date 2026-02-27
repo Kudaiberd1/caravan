@@ -76,6 +76,22 @@ export const activeAnomaliesMock: ActiveAnomaly[] = [
     },
 ];
 
+export type PersonnelRow = {
+    id: string;
+    Name: string;
+    fullName: string;
+    initials: string;
+    role: string;
+    plan: number;
+    actual: number;
+    pr: number;
+    nr: number;
+    deviation: number;
+    percent: number;
+    position: "sotrudnik" | "rukovoditel";
+};
+
+
 export const mockPersonnel: PersonnelRow[] = [
     // ===== Сотрудники =====
     {
