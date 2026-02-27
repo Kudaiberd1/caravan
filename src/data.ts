@@ -1,31 +1,4 @@
-import type {CriticalDeviationRow, DepartmentStaffing} from "./pages/Dashboard.tsx";
-
-export const mockDepartments: DepartmentStaffing[] = [
-    {id: "gen-dir", name: "Генеральная дирекция", current: 1, target: 1},
-    {id: "geo", name: "Геологический департамент", current: 1, target: 1},
-    {id: "internal-control", name: "Департамент внутреннего контроля", current: 1, target: 1},
-    {id: "mining", name: "Департамент горного производства", current: 185, target: 210},
-    {id: "it", name: "Департамент информационных технологий", current: 2, target: 3},
-    {id: "heap-leaching", name: "Департамент кучного выщелачивания", current: 28, target: 80},
-    {id: "logistics", name: "Департамент логистики", current: 68, target: 80},
-    {id: "mto", name: "Департамент материально-технического обеспечения", current: 27, target: 30},
-    {id: "hr-social", name: "Департамент по персоналу и социальным вопросам", current: 3, target: 4},
-
-    {id: "pm", name: "Департамент проектного управления", current: 2, target: 2},
-    {id: "production-support", name: "Департамент производственного обеспечения", current: 157, target: 175},
-    {
-        id: "hse",
-        name: "Департамент промышленной безопасности, охраны труда и окружающей среды",
-        current: 13,
-        target: 15
-    },
-    {id: "ore-prep", name: "Департамент рудоподготовки", current: 59, target: 80},
-    {id: "construction", name: "Департамент строительства", current: 1, target: 1},
-    {id: "metallurgy", name: "Металлургический департамент", current: 46, target: 52},
-    {id: "security", name: "Охранная компания", current: 15, target: 18},
-    {id: "tech", name: "Технологический департамент", current: 33, target: 38},
-    {id: "finance", name: "Финансовый департамент", current: 2, target: 2},
-];
+import type {CriticalDeviationRow} from "./pages/Dashboard.tsx";
 
 export const departments = [
     { id: "general", label: "Генеральная дирекция" },
@@ -52,52 +25,15 @@ export const criticalDeviationsMock: CriticalDeviationRow[] = [
 ];
 
 export type ActiveAnomaly = {
-    id: string;
-    title: string;
-    subtitle: string;
-    status: "НЕМЕДЛЕННЫЙ" | "СЕРЕДИНА" | "ПРЕДУПРЕЖДЕНИЕ";
-    accent: "red" | "amber" | "gray";
-    actions: { label: string; variant: "primary" | "danger" | "warning" | "ghost" }[];
+    anomalyId: number;
+    departmentName: string;
+    description: string;
+    priorityLabel: "НЕМЕДЛЕННЫЙ" | "СЕРЕДИНА" | "ПРЕДУПРЕЖДЕНИЕ";
 };
-
-export const activeAnomaliesMock: ActiveAnomaly[] = [
-    {
-        id: "a1",
-        title: "Пропущенный инструктаж по технике безопасности",
-        subtitle: "Сидоров С. (ID: 4821) проехал контрольно-пропускной пункт № 2 без медицинского разрешения.",
-        status: "НЕМЕДЛЕННЫЙ",
-        accent: "red",
-        actions: [
-            { label: "Уведомить руководителя", variant: "primary" },
-            { label: "Оправдывать", variant: "ghost" },
-        ],
-    },
-    {
-        id: "a2",
-        title: "Несанкционированный доступ в зону",
-        subtitle: "Петров П. - Зона шахты 3 (требуется уровень доступа 4).",
-        status: "СЕРЕДИНА",
-        accent: "amber",
-        actions: [
-            { label: "Уведомить руководителя", variant: "primary" },
-            { label: "Оправдывать", variant: "ghost" },
-        ],
-    },
-    {
-        id: "a3",
-        title: "Увеличенный перерыв (от 65 мин)",
-        subtitle: "Буровая бригада (группа 4) обнаружена в столовой с 12:45.",
-        status: "ПРЕДУПРЕЖДЕНИЕ",
-        accent: "gray",
-        actions: [
-            { label: "Уведомить руководителя", variant: "primary" },
-            { label: "Оправдывать", variant: "ghost" },
-        ],
-    },
-];
 
 export type PersonnelRow = {
     id: string;
+    Name: string;
     fullName: string;
     initials: string;
     role: string;
@@ -122,8 +58,9 @@ export const mockPersonnel: PersonnelRow[] = [
     // ===== Сотрудники =====
     {
         id: "1",
-        fullName: "Иванов В.",
-        initials: "II",
+        Name: "Өтепбергенов А.",
+        fullName: "Өтепбергенов Ардақ Амантайұлы",
+        initials: "https://storage.yandexcloud.kz/demo-bucket-karavan/people_photos/60.jpg",
         role: "Шахтер",
         plan: 160,
         actual: 175,
@@ -135,8 +72,9 @@ export const mockPersonnel: PersonnelRow[] = [
     },
     {
         id: "2",
-        fullName: "Петров П.",
-        initials: "PP",
+        Name: "Алғадаев Ж.",
+        fullName: "Алғадаев Жарас Кендебайұлы",
+        initials: "https://storage.yandexcloud.kz/demo-bucket-karavan/people_photos/62.jpg",
         role: "Шахтер",
         plan: 160,
         actual: 145,
@@ -148,8 +86,9 @@ export const mockPersonnel: PersonnelRow[] = [
     },
     {
         id: "3",
-        fullName: "Сидоров С.",
-        initials: "SC",
+        Name: "Денисов М.",
+        fullName: "Денисов Максим",
+        initials: "https://storage.yandexcloud.kz/demo-bucket-karavan/people_photos/72.jpg",
         role: "Водитель",
         plan: 160,
         actual: 158,
@@ -161,8 +100,9 @@ export const mockPersonnel: PersonnelRow[] = [
     },
     {
         id: "4",
-        fullName: "Кузнецов К.",
-        initials: "KK",
+        Name: "Солодовников А.",
+        fullName: "Солодовников Антон Юрьевич",
+        initials: "https://storage.yandexcloud.kz/demo-bucket-karavan/people_photos/76.jpg",
         role: "Бригадир",
         plan: 160,
         actual: 161,
@@ -174,8 +114,9 @@ export const mockPersonnel: PersonnelRow[] = [
     },
     {
         id: "5",
-        fullName: "Смирнов А.",
-        initials: "SA",
+        Name: "Байғазы Е.",
+        fullName: "Байғазы Ерасыл Серғазыұлы",
+        initials: "https://storage.yandexcloud.kz/demo-bucket-karavan/people_photos/78.jpg",
         role: "Шахтер",
         plan: 160,
         actual: 160,
@@ -187,8 +128,9 @@ export const mockPersonnel: PersonnelRow[] = [
     },
     {
         id: "6",
-        fullName: "Васильев В.",
-        initials: "VB",
+        Name: "Төребай М.",
+        fullName: "Төребай Мықтыбек Әбілбекұлы",
+        initials: "https://storage.yandexcloud.kz/demo-bucket-karavan/people_photos/80.jpg",
         role: "Инженер",
         plan: 160,
         actual: 161,
@@ -202,8 +144,9 @@ export const mockPersonnel: PersonnelRow[] = [
     // ===== Руководители =====
     {
         id: "7",
-        fullName: "Асылбек С.",
-        initials: "II",
+        Name: "Қаирғазы А.",
+        fullName: "Қаирғазы Арсен Нұржанұлы",
+        initials: "https://storage.yandexcloud.kz/demo-bucket-karavan/people_photos/81.jpg",
         role: "Шахтер",
         plan: 160,
         actual: 175,
@@ -215,8 +158,9 @@ export const mockPersonnel: PersonnelRow[] = [
     },
     {
         id: "8",
-        fullName: "Ерлан Е.",
-        initials: "PP",
+        Name: "Исаев Ж.",
+        fullName: "Исаев Жасұлан Сеитмұрадұлы",
+        initials: "https://storage.yandexcloud.kz/demo-bucket-karavan/people_photos/82.jpg",
         role: "Шахтер",
         plan: 160,
         actual: 145,
@@ -228,8 +172,9 @@ export const mockPersonnel: PersonnelRow[] = [
     },
     {
         id: "9",
-        fullName: "Игорь В.",
-        initials: "SC",
+        Name: "Бейбутов Ж.",
+        fullName: "Бейбутов Жандос Нуржанович",
+        initials: "https://storage.yandexcloud.kz/demo-bucket-karavan/people_photos/87.jpg",
         role: "Водитель",
         plan: 160,
         actual: 158,
@@ -241,8 +186,9 @@ export const mockPersonnel: PersonnelRow[] = [
     },
     {
         id: "10",
-        fullName: "Бауржан Д.",
-        initials: "KK",
+        Name: "Маевский Д.",
+        fullName: "Маевский Денис Андреевич",
+        initials: "https://storage.yandexcloud.kz/demo-bucket-karavan/people_photos/79.jpg",
         role: "Бригадир",
         plan: 160,
         actual: 161,
@@ -254,8 +200,9 @@ export const mockPersonnel: PersonnelRow[] = [
     },
     {
         id: "11",
-        fullName: "Кайсар А.",
-        initials: "SA",
+        Name: "Мустафинов С.",
+        fullName: "Мустафинов Султан Даниярович",
+        initials: "https://storage.yandexcloud.kz/demo-bucket-karavan/people_photos/87.jpg",
         role: "Шахтер",
         plan: 160,
         actual: 160,
@@ -268,8 +215,9 @@ export const mockPersonnel: PersonnelRow[] = [
     // ===== Additional Сотрудники =====
     {
         id: "12",
-        fullName: "Григорьев Д.",
-        initials: "GD",
+        Name: "Байторов К.",
+        fullName: "Байторов Куаныш Рахимжанович",
+        initials: "https://storage.yandexcloud.kz/demo-bucket-karavan/people_photos/113.jpg",
         role: "Шахтер",
         plan: 160,
         actual: 168,
@@ -281,8 +229,9 @@ export const mockPersonnel: PersonnelRow[] = [
     },
     {
         id: "13",
-        fullName: "Андреев М.",
-        initials: "AM",
+        Name: "Оспанов А.",
+        fullName: "Оспанов Азамат Тулендиевич",
+        initials: "https://storage.yandexcloud.kz/demo-bucket-karavan/people_photos/111.jpg",
         role: "Водитель",
         plan: 160,
         actual: 150,
@@ -294,8 +243,9 @@ export const mockPersonnel: PersonnelRow[] = [
     },
     {
         id: "14",
-        fullName: "Тимофеев Р.",
-        initials: "TR",
+        Name: "Кулумбегов С.",
+        fullName: "Кулумбегов Сергей Александрович",
+        initials: "https://storage.yandexcloud.kz/demo-bucket-karavan/people_photos/79.jpg",
         role: "Бригадир",
         plan: 160,
         actual: 162,
@@ -307,8 +257,9 @@ export const mockPersonnel: PersonnelRow[] = [
     },
     {
         id: "15",
-        fullName: "Зайцев К.",
-        initials: "ZK",
+        Name: "Суюмбаев А.",
+        fullName: "Суюмбаев Алибек Айдарович",
+        initials: "https://storage.yandexcloud.kz/demo-bucket-karavan/people_photos/59.jpg",
         role: "Инженер",
         plan: 160,
         actual: 172,
@@ -317,84 +268,5 @@ export const mockPersonnel: PersonnelRow[] = [
         deviation: 12,
         percent: 107.5,
         position: "sotrudnik",
-    },
-    {
-        id: "16",
-        fullName: "Орлов И.",
-        initials: "OI",
-        role: "Шахтер",
-        plan: 160,
-        actual: 158,
-        pr: 76,
-        nr: 80,
-        deviation: -2,
-        percent: 98.8,
-        position: "sotrudnik",
-    },
-    {
-        id: "17",
-        fullName: "Морозов С.",
-        initials: "MS",
-        role: "Водитель",
-        plan: 160,
-        actual: 165,
-        pr: 85,
-        nr: 83,
-        deviation: 5,
-        percent: 103.1,
-        position: "sotrudnik",
-    },
-    {
-        id: "18",
-        fullName: "Калинин П.",
-        initials: "KP",
-        role: "Шахтер",
-        plan: 160,
-        actual: 142,
-        pr: 60,
-        nr: 70,
-        deviation: -18,
-        percent: 88.8,
-        position: "sotrudnik",
-    },
-    {
-        id: "19",
-        fullName: "Лебедев А.",
-        initials: "LA",
-        role: "Инженер",
-        plan: 160,
-        actual: 160,
-        pr: 80,
-        nr: 80,
-        deviation: 0,
-        percent: 100.0,
-        position: "sotrudnik",
-    },
-    {
-        id: "20",
-        fullName: "Крылов Н.",
-        initials: "KN",
-        role: "Бригадир",
-        plan: 160,
-        actual: 155,
-        pr: 72,
-        nr: 75,
-        deviation: -5,
-        percent: 96.9,
-        position: "sotrudnik",
-    },
-    {
-        id: "21",
-        fullName: "Соловьев В.",
-        initials: "SV",
-        role: "Шахтер",
-        plan: 160,
-        actual: 174,
-        pr: 88,
-        nr: 86,
-        deviation: 14,
-        percent: 108.8,
-        position: "sotrudnik",
-    },
-
+    }
 ];
