@@ -1,10 +1,11 @@
 import {useNavigate} from "react-router-dom";
+import type {PersonnelRow} from "../data.ts";
 
 interface Prop {
-    who: string;
+    person: PersonnelRow;
 }
 
-const UserCard = ({who} : Prop) => {
+const UserCard = ({person} : Prop) => {
 
     const navigate = useNavigate();
 
@@ -13,22 +14,19 @@ const UserCard = ({who} : Prop) => {
             className="col-span-2 bg-[rgb(41,46,59)] rounded-xl p-6 text-white w-full border border-[rgba(255,255,255,0.06)]">
             <div className="flex items-start gap-6">
                 {/* Avatar (no photo) */}
-                <div
-                    className="h-[62px] w-[62px] rounded-full bg-[rgba(255,255,255,0.18)] flex items-center justify-center text-xl font-extrabold tracking-wide">
-                    ИИ
-                </div>
+                <img src={person.initials} className={"h-[62px] w-[62px] rounded-full object-cover"} />
 
                 {/* Main info */}
                 <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-4">
                         <div className="min-w-0">
-                            {who==="supervisor" ?
+                            {person.position==="rukovoditel" ?
                                 <h2 className="text-[20px] font-extrabold leading-tight truncate">
-                                    Асылбек Сабыржан - Майкудук
+                                    {person.fullName} - Майкудук
                                 </h2>
                                 :
                                 <h2 className="text-[20px] font-extrabold leading-tight truncate">
-                                    Иванов Иван Иванович - Алмалы
+                                    {person.fullName} - Алмалы
                                 </h2>
                             }
                             <p className="mt-1 text-sm text-gray-300">
@@ -39,7 +37,7 @@ const UserCard = ({who} : Prop) => {
                         <div className="shrink-0">
                                                 <span
                                                     className="inline-flex items-center rounded-full bg-[rgb(18,24,39)] px-3 py-1 text-[12px] font-semibold text-gray-200">
-                                                    ID: #16293
+                                                    ID: #{person.id}
                                                 </span>
                         </div>
                     </div>
@@ -72,7 +70,7 @@ const UserCard = ({who} : Prop) => {
                             </div>
                         </div>
 
-                        {who==="supervisor" ?
+                        {person.position==="rukovoditel" ?
                             <div>
                                 <div
                                     className="text-[11px] tracking-widest uppercase text-gray-300">Эффективность команды
@@ -88,9 +86,9 @@ const UserCard = ({who} : Prop) => {
                                     className="text-[11px] tracking-widest uppercase text-gray-300">Руководитель
                                 </div>
                                 <button type="button"
-                                        onClick={() => navigate("/user/supervisor/1")}
-                                        className="cursor-pointer mt-1 inline-flex items-center gap-2 text-[15px] font-semibold text-gray-100 hover:text-white transition">
-                                    АСЫЛБЕК С.
+                                        onClick={() => navigate(`/user/supervisor/7`)}
+                                        className="cursor-pointer mt-1 inline-flex items-center gap-2 text-[15px] font-semibold text-gray-100 hover:text-white transition uppercase">
+                                    Қаирғазы А.
                                     <span className="text-gray-300">›</span>
                                 </button>
                             </div>
