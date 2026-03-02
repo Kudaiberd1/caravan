@@ -2,6 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import notificationIcon from "../assets/icons/notification.svg";
 import {useNavigate} from "react-router-dom";
 import {getUserDetails, type User} from "../services/getUserDetails.ts";
+import api from "../api/axiosInstance.ts";
+import {useOnLocationStore} from "../store/useOnLocationStore.ts";
+import {useDepartmentHeatmapStore} from "../store/useDepartmentHeatmapStore.ts";
+import {useAnomalyStore} from "../store/useAnomalyStore.ts";
 
 const Navbar = () => {
     const [open, setOpen] = useState(false);
@@ -9,6 +13,11 @@ const Navbar = () => {
     const navigate = useNavigate();
 
     const [user] = useState<User | null>(() => getUserDetails());
+
+    const [location, setLocation] = useState<string>("Almaty");
+    const setOnLocation = useOnLocationStore((s) => s.setOnLocation);
+    const setHeatmap = useDepartmentHeatmapStore((s) => s.setHeatmap);
+    const setAnomaly = useAnomalyStore((s) => s.setAnomaly);
 
     useEffect(() => {
         const onDocMouseDown = (e: MouseEvent) => {
@@ -29,6 +38,20 @@ const Navbar = () => {
         };
     }, []);
 
+    useEffect(() => {
+        api.get("/event/on-location", { params: { location } })
+            .then((res) => setOnLocation(res.data))
+            .catch((err) => console.error("Error from event on location", err));
+
+        api.get("/event/heatmap", { params : { location } })
+            .then((res) => setHeatmap(res.data))
+            .catch((err) => console.error("Error from event heatmap", err));
+
+        api.get("/anomaly", { params : { location } })
+            .then((res) => setAnomaly(res.data))
+            .catch((err) => console.error("Error from anomaly", err));
+    }, [location, setHeatmap, setOnLocation, setAnomaly]);
+
     const handleLogout = () => {
         setOpen(false);
         localStorage.clear();
@@ -47,15 +70,20 @@ const Navbar = () => {
 
             <div className={"flex items-center gap-4"}>
                 <select
+                    value={location ?? ""}
+                    onChange={(e) => {
+                        const v = e.target.value;
+                        setLocation(v);
+                    }}
                     className={
                         "h-9 rounded-md border border-black/10 px-3 text-sm " +
                         "bg-white outline-none focus:border-[#5F6FA3]"
                     }
                 >
-                    <option>Алматы</option>
-                    <option>Алмалы</option>
-                    <option>Ашыктас</option>
-                    <option>Майкудык</option>
+                    <option value={"Almaty"}>Алматы</option>
+                    <option value={"Almaly"}>Алмалы</option>
+                    <option value={"Ashyktas"}>Ашыктас</option>
+                    <option value={"Maikuduk"}>Майкудык</option>
                 </select>
 
                 <button className={"text-[#5A667A] hover:text-[#1F2A44] cursor-pointer"}>

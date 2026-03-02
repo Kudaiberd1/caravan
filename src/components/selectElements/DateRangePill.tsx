@@ -2,7 +2,7 @@ import { DayPicker } from "react-day-picker";
 import type { DateRange } from "react-day-picker";
 import "react-day-picker/style.css";
 import { format } from "date-fns";
-import calendar from "../assets/icons/CalendarBlank.svg";
+import calendar from "../../assets/icons/CalendarBlank.svg";
 import {useEffect, useState} from "react";
 
 function fmt(d?: Date) {

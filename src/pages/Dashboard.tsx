@@ -5,22 +5,26 @@ import alertIcon from "../assets/icons/alert.svg"
 import groupIcon from "../assets/icons/groupIcon.svg"
 import usersIcon from "../assets/icons/Users.svg"
 import {useState} from "react";
-import DepartmentCard from "../components/DepartmentCard.tsx";
-import {DensityLegend} from "../components/DensityLegend.tsx";
+import DepartmentCard from "../components/cards/DepartmentCard.tsx";
+import {DensityLegend} from "../components/charts/DensityLegend.tsx";
 import Footer from "../layouts/Footer.tsx";
-import TabSwitcher from "../components/TabSwitcher.tsx";
+import TabSwitcher from "../components/tabs/TabSwitcher.tsx";
 import SmoothAreaChart from "../components/charts/SmoothAreaChart.tsx";
-import {activeAnomaliesMock, criticalDeviationsMock, departments, mockDepartments} from "../data.ts";
-import DateRangePillForWeek from "../components/DateRangePillForWeek.tsx";
-import MultiSelectDropdown from "../components/MultiSelectDropdown.tsx";
+import { criticalDeviationsMock, departments} from "../data.ts";
+import DateRangePillForWeek from "../components/selectElements/DateRangePillForWeek.tsx";
+import MultiSelectDropdown from "../components/selectElements/MultiSelectDropdown.tsx";
 import DepartmentLinesChart from "../components/charts/DepartmentLinesChart.tsx";
 import MainNavbar from "../layouts/MainNavbar.tsx";
+import {useOnLocationStore} from "../store/useOnLocationStore.ts";
+import {useDepartmentHeatmapStore} from "../store/useDepartmentHeatmapStore.ts";
+import {useAnomalyStore} from "../store/useAnomalyStore.ts";
+import api from "../api/axiosInstance.ts";
 
 export type DepartmentStaffing = {
-    id: string;
-    name: string;
-    current: number;
-    target: number;
+    departmentId: string;
+    departmentName: string;
+    employeesOnLocation: number;
+    employeesTotal: number;
 };
 
 export type CriticalDeviationRow = {
@@ -31,6 +35,13 @@ export type CriticalDeviationRow = {
     percent: number;
 };
 
+export interface SendReportType {
+    reportType: string;
+    recipientIds: number[];
+    bodyText: string;
+    subject: string;
+}
+
 const Dashboard = () => {
 
     const [active, setActive] = useState<number>(1);
@@ -39,6 +50,26 @@ const Dashboard = () => {
     const [selectedDeps, setSelectedDeps] = useState<string[]>(["general", "geology", "internal_control", "mining", "it", "heap_leaching", "logistics", "supply"]);
 
     const [criticalSearch, setCriticalSearch] = useState<string>("");
+    const [notifyOpen, setNotifyOpen] = useState(false);
+    const [notifySubject, setNotifySubject] = useState("");
+    const [notifyAnomalyId, setNotifyAnomalyId] = useState<number | null>(null);
+    const [notifyAnomaly, setNotifyAnomaly] = useState<typeof anomaly[number] | null>(null);
+
+    const openNotify = (item: typeof anomaly[number]) => {
+        setNotifyAnomaly(item);
+        setNotifySubject("");
+        setNotifyOpen(true);
+    };
+
+    const closeNotify = () => {
+        setNotifyOpen(false);
+        setNotifyAnomaly(null);
+        setNotifySubject("");
+    };
+    const onLocation = useOnLocationStore((s) => s.onLocation);
+    const heatmap = useDepartmentHeatmapStore((s) => s.heatmap);
+    const anomaly = useAnomalyStore((s) => s.anomaly);
+    const setAnomaly = useAnomalyStore((s) => s.setAnomaly);
 
     const filteredCriticalRows = criticalDeviationsMock.filter((row) => {
         const q = criticalSearch.trim().toLowerCase();
@@ -48,6 +79,40 @@ const Dashboard = () => {
             row.department.toLowerCase().includes(q)
         );
     });
+
+    const handleAnomalyClick =  async (anomalyId: number) => {
+        try{
+            await api.put(`/anomaly/resolve/${anomalyId}`);
+            setAnomaly(anomaly.filter((a) => a.anomalyId !== anomalyId));
+        }catch (err) {
+            console.error("Error resolving anomaly", err);
+        }
+    }
+
+    const handleNotifySubmit = async (id: number) => {
+        if (!notifyAnomaly) return;
+
+        const payload: SendReportType = {
+            reportType: "FEEDBACK_TO_SUPERVISOR",
+            recipientIds: [id],
+            bodyText: notifyAnomaly.description ?? "",
+            subject: notifySubject,
+        };
+
+        if (!payload.subject.trim()) return;
+        if (payload.recipientIds.length === 0) {
+            console.error("Cannot send report: recipientIds is empty. Provide supervisorId in anomaly DTO.");
+            return;
+        }
+
+        try {
+            await api.post("/reports", payload);
+            await api.put(`/anomaly/resolve/${notifyAnomalyId}`);
+            setAnomaly(anomaly.filter((a) => a.anomalyId !== notifyAnomalyId));
+        } catch (err) {
+            console.error("Error sending notification", err);
+        }
+    };
 
     return (
         <div>
@@ -88,7 +153,7 @@ const Dashboard = () => {
                             <div className={"flex justify-between items-start mb-[15px]"}>
                                 <div className={"space-y-[7px]"}>
                                     <p className={"text-gray-500 font-semibold text-sm uppercase"}> Критические отклонения </p>
-                                    <h1 className={"text-[28px] font-bold"}> 14 <span
+                                    <h1 className={"text-[28px] font-bold"}> {anomaly.length} <span
                                         className={"text-gray-500 text-[15px] font-normal"}> Оповещений </span></h1>
                                     <p className={"text-gray-500 text-[12px]"}>
                                         Разница во времени между сменами {">"} 2 часов
@@ -102,7 +167,7 @@ const Dashboard = () => {
                             <div className={"flex justify-between items-start mb-[18px]"}>
                                 <div className={"space-y-[7px]"}>
                                     <p className={"text-gray-500 font-semibold text-sm uppercase"}> На Локации сейчас </p>
-                                    <h1 className={"text-[28px] font-bold"}> 428 </h1>
+                                    <h1 className={"text-[28px] font-bold"}> {onLocation} </h1>
                                     <p className={"text-gray-500 text-[12px]"}> Распределено по 5 зонам </p>
                                 </div>
                                 <img src={groupIcon} className={"w-[50px]"} alt={"statistic_icon"}/>
@@ -180,10 +245,12 @@ const Dashboard = () => {
                             <div
                                 className={"py-[20px] border border-dashed border-gray-300 rounded-lg mb-[20px] bg-gray-50 p-4 flex-1"}>
                                 {active === 1 ?
-                                    <div className={"grid grid-cols-2 gap-2"}>
-                                        {mockDepartments.map((dept) =>
-                                            <DepartmentCard key={dept.id} staffing={dept}/>
-                                        )}
+                                    <div>
+                                        <div className={"grid grid-cols-2 gap-2"}>
+                                            {heatmap.map((dept) =>
+                                                <DepartmentCard key={dept.departmentId} staffing={dept}/>
+                                            )}
+                                        </div>
                                         <DensityLegend/>
                                     </div>
                                     :
@@ -332,70 +399,68 @@ const Dashboard = () => {
                             <div className={"flex-1 min-h-0"}>
                                 <div className={"px-5 py-4 h-full"}>
                                     <div className={"h-full overflow-y-auto pr-1 space-y-3"}>
-                                        {activeAnomaliesMock.map((item) => {
+                                        {anomaly.map((item) => {
                                             const accentClass =
-                                                item.accent === "red"
+                                                item.priorityLabel === "НЕМЕДЛЕННЫЙ"
                                                     ? "bg-red-500"
-                                                    : item.accent === "amber"
+                                                    : item.priorityLabel === "СЕРЕДИНА"
                                                         ? "bg-amber-500"
                                                         : "bg-gray-300";
 
                                             const badgeClass =
-                                                item.status === "НЕМЕДЛЕННЫЙ"
+                                                item.priorityLabel === "НЕМЕДЛЕННЫЙ"
                                                     ? "text-red-600"
-                                                    : item.status === "СЕРЕДИНА"
+                                                    : item.priorityLabel === "СЕРЕДИНА"
                                                         ? "text-amber-600"
                                                         : "text-gray-400";
 
                                             return (
                                                 <div
-                                                    key={item.id}
+                                                    key={item.anomalyId}
                                                     className={
                                                         "relative rounded-xl border border-gray-200 overflow-hidden " +
-                                                        (item.accent === "red"
+                                                        (item.priorityLabel === "НЕМЕДЛЕННЫЙ"
                                                             ? "bg-red-50"
-                                                            : item.accent === "amber"
+                                                            : item.priorityLabel === "СЕРЕДИНА"
                                                                 ? "bg-amber-50"
                                                                 : "bg-white")
                                                     }
                                                 >
-                                                    {/**/}
                                                     <div className={"absolute left-0 top-0 h-full w-1 " + accentClass} />
 
                                                     <div className={"p-4 pl-5"}>
                                                         <div className={"flex items-start justify-between gap-4"}>
                                                             <div className={"space-y-1"}>
-                                                                <p className={"font-semibold text-[15px] text-gray-900"}>{item.title}</p>
-                                                                <p className={"text-[12.5px] text-gray-500"}>{item.subtitle}</p>
+                                                                <p className={"font-semibold text-[15px] text-gray-900"}>{item.departmentName}</p>
+                                                                <p className={"text-[12.5px] text-gray-500"}>{item.description}</p>
                                                             </div>
 
-                                                            <div className={"text-[12px] font-semibold " + badgeClass}>{item.status}</div>
+                                                            <div className={"text-[12px] font-semibold " + badgeClass}>{item.priorityLabel}</div>
                                                         </div>
 
                                                         <div className={"mt-3 items-center gap-2 flex-wrap grid grid-cols-3"}>
-                                                            {item.actions.map((a, idx) => {
-                                                                const cls =
-                                                                    a.variant === "danger"
-                                                                        ? "border-red-200 text-red-600 bg-white"
-                                                                        : a.variant === "warning"
-                                                                            ? "bg-amber-500 text-white border-amber-500"
-                                                                            : a.variant === "primary"
-                                                                                ? "border-gray-200 text-gray-900 bg-white col-span-2"
-                                                                                : "border-gray-200 text-gray-400 bg-gray-50 col-span-1";
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => {openNotify(item); setNotifyAnomalyId(item.anomalyId)}}
+                                                                className={"px-4 py-2 rounded-lg text-[12px] font-semibold border min-w-[140px] border-gray-200 text-gray-900 bg-white col-span-2 cursor-pointer transition-all duration-150 hover:shadow-md"}
+                                                            >
+                                                                Уведомить руководителя
+                                                            </button>
 
-                                                                return (
-                                                                    <button
-                                                                        key={idx}
-                                                                        type="button"
-                                                                        className={
-                                                                            "px-4 py-2 rounded-lg text-[12px] font-semibold border min-w-[140px] " +
-                                                                            cls
-                                                                        }
-                                                                    >
-                                                                        {a.label}
-                                                                    </button>
-                                                                );
-                                                            })}
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => handleAnomalyClick(item.anomalyId)}
+                                                                className={
+                                                                    "px-4 py-2 rounded-lg text-[12px] font-semibold border min-w-[140px] cursor-pointer transition-all duration-150 hover:shadow-md " +
+                                                                    (item.priorityLabel === "НЕМЕДЛЕННЫЙ"
+                                                                        ? "border-red-200 text-red-600 bg-white"
+                                                                        : item.priorityLabel === "СЕРЕДИНА"
+                                                                            ? "bg-amber-500 text-white border-amber-500"
+                                                                            : "border-gray-200 text-gray-400 bg-gray-50")
+                                                                }
+                                                            >
+                                                                Оправдать
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -407,6 +472,102 @@ const Dashboard = () => {
                         </div>
                     </div>
                 </div>
+                {notifyOpen && notifyAnomaly && (
+                    <div
+                        className="fixed inset-0 z-[999] bg-black/40 flex items-center justify-center px-4"
+                        onMouseDown={closeNotify}
+                    >
+                        <div
+                            className="w-full max-w-[720px] rounded-2xl bg-white shadow-2xl overflow-hidden"
+                            onMouseDown={(e) => e.stopPropagation()}
+                        >
+                            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                                <div>
+                                    <h3 className="text-lg font-semibold">Уведомить руководителя</h3>
+                                    <p className="text-xs text-gray-500 mt-0.5">Авто-заполнение по аномалии • Редактируется только тема</p>
+                                </div>
+                                <button
+                                    type="button"
+                                    className="h-10 w-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center"
+                                    onClick={closeNotify}
+                                    aria-label="close"
+                                >
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M18 6L6 18" stroke="#111827" strokeWidth="2" strokeLinecap="round"/>
+                                        <path d="M6 6L18 18" stroke="#111827" strokeWidth="2" strokeLinecap="round"/>
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <div className="px-6 py-5 space-y-5">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <div className="text-sm text-gray-700 mb-2">Сотрудник</div>
+                                        <input
+                                            value={notifyAnomaly.employeeName ?? "—"}
+                                            disabled
+                                            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 text-gray-700"
+                                        />
+                                    </div>
+                                    <div>
+                                        <div className="text-sm text-gray-700 mb-2">Приоритет</div>
+                                        <input
+                                            value={notifyAnomaly.priorityLabel ?? "—"}
+                                            disabled
+                                            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 text-gray-700"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div className="text-sm text-gray-700 mb-2">Тема</div>
+                                    <input
+                                        value={notifySubject}
+                                        onChange={(e) => setNotifySubject(e.target.value)}
+                                        placeholder="Введите тему уведомления..."
+                                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-200"
+                                    />
+                                </div>
+
+                                <div>
+                                    <div className="text-sm text-gray-700 mb-2">Описание (авто)</div>
+                                    <textarea
+                                        value={notifyAnomaly.description ?? ""}
+                                        disabled
+                                        rows={4}
+                                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 text-gray-700 resize-none"
+                                    />
+                                </div>
+
+                                <div className="flex items-center justify-end gap-3">
+                                    <button
+                                        type="button"
+                                        className="px-6 py-2.5 rounded-full bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200"
+                                        onClick={closeNotify}
+                                    >
+                                        Отмена
+                                    </button>
+                                    <button
+                                        type="button"
+                                        disabled={!notifySubject.trim()}
+                                        className={
+                                            "px-6 py-2.5 rounded-full text-white text-sm font-semibold " +
+                                            (!notifySubject.trim()
+                                                ? "bg-[rgb(49,57,91)]/50 cursor-not-allowed"
+                                                : "bg-[rgb(49,57,91)] hover:bg-[rgb(40,48,80)]")
+                                        }
+                                        onClick={() => {
+                                            handleNotifySubmit(notifyAnomaly?.anomalyId);
+                                            closeNotify();
+                                        }}
+                                    >
+                                        Отправить
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
                 <Footer/>
             </div>
         </div>

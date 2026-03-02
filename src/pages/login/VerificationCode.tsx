@@ -1,4 +1,4 @@
-import LoginCard from "../../components/LoginCard.tsx";
+import LoginCard from "../../components/cards/LoginCard.tsx";
 import {useNavigate} from "react-router-dom";
 import {useMemo, useRef, useState, type KeyboardEvent, type ClipboardEvent} from "react";
 

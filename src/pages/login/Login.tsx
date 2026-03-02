@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
-import LoginCard from "../../components/LoginCard.tsx";
+import LoginCard from "../../components/cards/LoginCard.tsx";
+import {LoginApi} from "../../api/LoginApi.ts";
 
 const Login = () => {
     const [hasError, setHasError] = useState(0);
@@ -30,15 +31,15 @@ const Login = () => {
         }
         setHasError(0);
 
-        navigate('/');
-
-        // try{
-        //     const token = await LoginApi(username, password);
-        //     localStorage.setItem("accessToken", JSON.stringify(token));
-        //     navigate('/');
-        // }catch (err){
-        //     alert(err.message)
-        // }
+        try{
+            const token = await LoginApi(username, password);
+            localStorage.setItem("accessToken", JSON.stringify(token));
+            navigate('/');
+        }catch (err){
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
+            alert(err.message)
+        }
     }
 
     return (

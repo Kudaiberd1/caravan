@@ -4,12 +4,12 @@ import filterIcon from "../../assets/icons/filterIcon.svg";
 import downloadIcon from "../../assets/icons/downloadIcon.svg";
 import {departments, mockPersonnel} from "../../data.ts";
 import {useEffect, useMemo, useState} from "react";
-import TabSwitcher from "../../components/TabSwitcher.tsx";
+import TabSwitcher from "../../components/tabs/TabSwitcher.tsx";
 import backIcon from "../../assets/icons/backIcon.svg";
 import Footer from "../../layouts/Footer.tsx";
 import cancelIcon from "../../assets/icons/cancelIcon.svg";
-import MultipleTabSwitcher from "../../components/MultipleTabSwitcher.tsx";
-import MultiSelectDropdown from "../../components/MultiSelectDropdown.tsx";
+import MultipleTabSwitcher from "../../components/tabs/MultipleTabSwitcher.tsx";
+import MultiSelectDropdown from "../../components/selectElements/MultiSelectDropdown.tsx";
 import SpiderChart from "../../components/charts/SpiderChart.tsx";
 import DivergingBarChart from "../../components/charts/DivergingBarChart.tsx";
 import {usePersonnelFilters} from "../../hooks/usePersonnelFilters.ts";
@@ -27,16 +27,19 @@ const Performance = () => {
 
     const [feedbackOpen, setFeedbackOpen] = useState(false);
     const [feedbackSent, setFeedbackSent] = useState(false);
+    const [feedbackSubject, setFeedbackSubject] = useState<string>("");
     const [feedbackText, setFeedbackText] = useState<string>("");
 
     const [whatsAppOpen, setWhatsAppOpen] = useState(false);
     const [whatsAppSent, setWhatsAppSent] = useState(false);
+    const [whatsAppSubject, setWhatsAppSubject] = useState<string>("");
     const [whatsAppText, setWhatsAppText] = useState<string>("");
 
     const [recipientIds, setRecipientIds] = useState<string[]>([]);
 
     const openFeedback = (ids: string[]) => {
         setRecipientIds(ids);
+        setFeedbackSubject("");
         setFeedbackText("");
         setFeedbackSent(false);
         setFeedbackOpen(true);
@@ -44,6 +47,7 @@ const Performance = () => {
 
     const openWhatsApp = (ids: string[]) => {
         setRecipientIds(ids);
+        setWhatsAppSubject("");
         setWhatsAppText("");
         setWhatsAppSent(false);
         setWhatsAppOpen(true);
@@ -54,7 +58,9 @@ const Performance = () => {
         setWhatsAppOpen(false);
         setFeedbackSent(false);
         setWhatsAppSent(false);
+        setFeedbackSubject("");
         setFeedbackText("");
+        setWhatsAppSubject("");
         setWhatsAppText("");
         setRecipientIds([]);
     };
@@ -354,8 +360,19 @@ const Performance = () => {
                                                     <span className={"text-gray-700"}>{r.label}</span>
                                                     <button
                                                         type="button"
-                                                        className={"text-red-500 hover:text-red-600"}
-                                                        onClick={() => setRecipientIds((prev) => prev.filter((id) => id !== r.id))}
+                                                        disabled={selectedRecipients.length <= 1}
+                                                        className={
+                                                            "text-red-500 hover:text-red-600 " +
+                                                            (selectedRecipients.length <= 1 ? "opacity-40 cursor-not-allowed" : "")
+                                                        }
+                                                        onClick={() => {
+                                                            if (selectedRecipients.length <= 1) return;
+                                                            if (recipientIds.length) {
+                                                                setRecipientIds((prev) => prev.filter((id) => id !== r.id));
+                                                            } else {
+                                                                setSelectedRows((prev) => prev.filter((id) => id !== r.id));
+                                                            }
+                                                        }}
                                                         aria-label="remove"
                                                     >
                                                         ×
@@ -366,6 +383,15 @@ const Performance = () => {
                                     </div>
 
                                     <div className={"mt-5"}>
+                                        <div className={"text-sm text-gray-700 mb-2"}>Тема:</div>
+                                        <input
+                                            value={feedbackSubject}
+                                            onChange={(e) => setFeedbackSubject(e.target.value)}
+                                            className={"w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-200"}
+                                        />
+                                    </div>
+
+                                    <div className={"mt-4"}>
                                         <div className={"text-sm text-gray-700 mb-2"}>Описание:</div>
                                         <textarea
                                             value={feedbackText}
@@ -386,9 +412,9 @@ const Performance = () => {
 
                                         <button
                                             type="button"
-                                            className={"px-8 py-2.5 rounded-full bg-[rgb(49,57,91)] text-white text-sm font-semibold hover:bg-[rgb(40,48,80)] inline-flex items-center gap-2"}
+                                            className={"px-8 py-2.5 rounded-full bg-[rgb(49,57,91)] text-white text-sm font-semibold hover:bg-[rgb(40,48,80)] inline-flex items-center gap-2 disabled:cursor-not-allowed"}
                                             onClick={() => setFeedbackSent(true)}
-                                            disabled={selectedRecipients.length === 0 || !feedbackText}
+                                            disabled={selectedRecipients.length === 0 || !feedbackText || !feedbackSubject}
                                         >
                                             Отправить
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -471,8 +497,19 @@ const Performance = () => {
                                                     <span className={"text-gray-700"}>{r.label}</span>
                                                     <button
                                                         type="button"
-                                                        className={"text-red-500 hover:text-red-600"}
-                                                        onClick={() => setRecipientIds((prev) => prev.filter((id) => id !== r.id))}
+                                                        disabled={selectedRecipients.length <= 1}
+                                                        className={
+                                                            "text-red-500 hover:text-red-600 " +
+                                                            (selectedRecipients.length <= 1 ? "opacity-40 cursor-not-allowed" : "")
+                                                        }
+                                                        onClick={() => {
+                                                            if (selectedRecipients.length <= 1) return;
+                                                            if (recipientIds.length) {
+                                                                setRecipientIds((prev) => prev.filter((id) => id !== r.id));
+                                                            } else {
+                                                                setSelectedRows((prev) => prev.filter((id) => id !== r.id));
+                                                            }
+                                                        }}
                                                         aria-label="remove"
                                                     >
                                                         ×
@@ -483,6 +520,15 @@ const Performance = () => {
                                     </div>
 
                                     <div className={"mt-5"}>
+                                        <div className={"text-sm text-gray-700 mb-2"}>Тема:</div>
+                                        <input
+                                            value={whatsAppSubject}
+                                            onChange={(e) => setWhatsAppSubject(e.target.value)}
+                                            className={"w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-200"}
+                                        />
+                                    </div>
+
+                                    <div className={"mt-4"}>
                                         <div className={"text-sm text-gray-700 mb-2"}>Сообщение:</div>
                                         <textarea
                                             value={whatsAppText}
@@ -502,9 +548,9 @@ const Performance = () => {
 
                                         <button
                                             type="button"
-                                            className={"px-8 py-2.5 rounded-full bg-[rgb(49,57,91)] text-white text-sm font-semibold hover:bg-[rgb(40,48,80)] inline-flex items-center gap-2"}
+                                            className={"px-8 py-2.5 rounded-full bg-[rgb(49,57,91)] text-white text-sm font-semibold hover:bg-[rgb(40,48,80)] inline-flex items-center gap-2 disabled:cursor-not-allowed"}
                                             onClick={() => setWhatsAppSent(true)}
-                                            disabled={selectedRecipients.length === 0 || !whatsAppText}
+                                            disabled={selectedRecipients.length === 0 || !whatsAppText || !whatsAppSubject}
                                         >
                                             Отправить
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"

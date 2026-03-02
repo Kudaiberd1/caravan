@@ -1,6 +1,6 @@
-import logo from "../assets/logo.svg";
+import logo from "../../assets/logo.svg";
 import {useEffect, useState} from "react";
-import api from "../api/axiosInstance.ts";
+import api from "../../api/axiosInstance.ts";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error

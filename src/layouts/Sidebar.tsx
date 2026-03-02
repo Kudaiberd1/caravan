@@ -1,4 +1,4 @@
-import {NavLink} from "react-router-dom";
+import {useNavigate, useLocation} from "react-router-dom";
 import logo from "../assets/logo.svg";
 import calendarIcon from "../assets/icons/CalendarBlank.svg";
 import folderIcon from "../assets/icons/FolderNotchOpen.svg";
@@ -28,6 +28,10 @@ const Icon = ({name}: {name: "home" | "calendar" | "folder"}) => {
 };
 
 const Sidebar = () => {
+
+    const navigate = useNavigate();
+    const location = useLocation();
+
     return (
         <aside
             className={
@@ -45,26 +49,27 @@ const Sidebar = () => {
                 <ul className={"space-y-1"}>
                     {navItems.map((item) => (
                         <li key={item.to}>
-                            <NavLink
-                                to={item.to}
-                                className={({isActive}) =>
-                                    "pl-5 group flex items-center gap-3 px-4 py-3 text-sm transition " +
-                                    (isActive
-                                        ? "bg-[#EEF3FF] text-[#1F2A44] font-medium relative"
-                                        : "text-[#5A667A] hover:bg-black/5")
-                                }
-                            >
-                                {({isActive}) => (
-                                    <>
+                            {(() => {
+                                const isActive = location.pathname === item.to;
+                                return (
+                                    <div
+                                        onClick={() => navigate(item.to)}
+                                        className={
+                                            "pl-5 group flex items-center gap-3 px-4 py-3 text-sm transition relative cursor-pointer " +
+                                            (isActive
+                                                ? "bg-[#EEF3FF] text-[#1F2A44] font-medium"
+                                                : "text-[#5A667A] hover:bg-black/5")
+                                        }
+                                    >
                                         <Icon name={item.icon} />
                                         <span>{item.label}</span>
 
                                         {isActive && (
-                                            <span className={"absolute right-0 top-0 bottom-0 w-[3px] bg-[#5F6FA3]"} />
+                                            <span className="absolute right-0 top-0 bottom-0 w-[3px] bg-[#5F6FA3]" />
                                         )}
-                                    </>
-                                )}
-                            </NavLink>
+                                    </div>
+                                );
+                            })()}
                         </li>
                     ))}
                 </ul>

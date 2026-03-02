@@ -1,4 +1,4 @@
-import type {DepartmentStaffing} from "../pages/Dashboard.tsx";
+import type {DepartmentStaffing} from "../../pages/Dashboard.tsx";
 
 export type StaffingStatus = "green" | "yellow" | "orange" | "red";
 
@@ -21,7 +21,7 @@ type Props = {
 };
 
 const DepartmentCard = ({staffing}: Props) => {
-    const status = getStatus(staffing.current / staffing.target);
+    const status = getStatus(staffing.employeesOnLocation / staffing.employeesTotal);
 
     return (
         <div
@@ -31,7 +31,7 @@ const DepartmentCard = ({staffing}: Props) => {
             }
         >
             <p className="text-center text-slate-600 text-sm leading-snug break-words">
-                {staffing.name} - <span className="font-semibold text-slate-700">{staffing.current}</span>
+                {staffing.departmentName} - <span className="font-semibold text-slate-700">{staffing.employeesOnLocation}</span>
             </p>
         </div>
     );

@@ -8,6 +8,8 @@ import ProtectedRoute from "./ProtectedRoute.tsx";
 import Dashboard from "../pages/Dashboard.tsx";
 import Performance from "../pages/performance/Performance.tsx";
 import Reports from "../pages/Reports.tsx";
+import UserProfile from "../pages/UserProfile.tsx";
+import SupervisorProfile from "../pages/SupervisorProfile.tsx";
 
 function App() {
 
@@ -22,6 +24,8 @@ function App() {
             <Route path={"/"} element={<Dashboard />} />
             <Route path={"/performance"} element={<Performance />} />
             <Route path={"/reports"} element={<Reports />} />
+            <Route path={"/user/:id"} element={<UserProfile />} />
+            <Route path={"/user/supervisor/:id"} element={<SupervisorProfile />} />
         </Route>
     </Routes>
   )
